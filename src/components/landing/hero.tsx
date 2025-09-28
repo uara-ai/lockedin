@@ -91,10 +91,10 @@ export default function HeroSection() {
                   <ArrowRight className="size-4" />
                 </Link>
 
-                <h1 className="mt-10 text-balance text-4xl font-bold md:text-5xl xl:text-5xl">
+                <h1 className="mt-10 text-balance text-4xl font-bold md:text-5xl xl:text-5xl tracking-wide">
                   Open-Source LinkedIn alternative for people who ship
                 </h1>
-                <p className="mt-8">
+                <p className="my-8">
                   Accountability, growth, and community for builders.
                 </p>
 
