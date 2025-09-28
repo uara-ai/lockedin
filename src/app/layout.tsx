@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import { OpenPanelComponent } from "@openpanel/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <OpenPanelComponent
+            clientId={process.env.NEXT_PUBLIC_OPEN_PANEL_CLIENT_ID!}
+            clientSecret={process.env.OPEN_PANEL_CLIENT_SECRET!}
+            trackScreenViews={true}
+            disabled={process.env.NODE_ENV !== "production"}
+          />
           {children}
         </ThemeProvider>
       </body>

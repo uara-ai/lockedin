@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { SubscribeInput } from "../subscribe-input";
+import { GithubStars } from "../github-stars";
 
 const menuItems = [
   { name: "Features", href: "#" },
@@ -60,12 +61,13 @@ export default function HeroSection() {
                   </ul>
                 </div>
 
-                <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6">
+                <div className="flex items-center gap-3">
                   <Button asChild variant="outline" size="sm">
                     <Link href="#">
                       <span>Login</span>
                     </Link>
                   </Button>
+                  <GithubStars />
                 </div>
               </div>
             </div>
