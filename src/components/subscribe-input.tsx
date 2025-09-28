@@ -21,7 +21,7 @@ function SubmitButton() {
           <Loader2 className="w-5 h-5 animate-spin" />
         ) : (
           <>
-            <span className="hidden md:block">Get Started</span>
+            <span className="hidden md:block">Join</span>
             <SendHorizontal
               className="relative mx-auto size-5 md:hidden"
               strokeWidth={2}
@@ -93,7 +93,7 @@ export function SubscribeInput() {
             <Mail className="text-caption pointer-events-none absolute inset-y-0 left-5 my-auto size-5" />
 
             <input
-              placeholder="Your mail address"
+              placeholder="Join the waitlist"
               className="h-14 w-full bg-transparent pl-12 focus:outline-none"
               type="email"
               name="email"

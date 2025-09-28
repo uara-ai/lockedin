@@ -100,12 +100,6 @@ export default function HeroSection() {
 
                 <div>
                   <SubscribeInput />
-
-                  <ul className="list-inside list-disc space-y-2">
-                    <li>Open-Source</li>
-                    <li>Accountability</li>
-                    <li>Community</li>
-                  </ul>
                 </div>
               </div>
             </div>
