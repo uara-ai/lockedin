@@ -1,0 +1,53 @@
+import * as React from "react";
+import { Plus } from "lucide-react";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import { Sponsors } from "./sponsors";
+import { Contributors } from "./contributors";
+import { SocialsHeader } from "./socials-header";
+import Link from "next/link";
+
+export function SidebarRight({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  return (
+    <Sidebar
+      collapsible="none"
+      className="sticky top-0 hidden h-svh border-l lg:flex"
+      {...props}
+    >
+      <SidebarHeader className="border-sidebar-border h-16 border-b">
+        <SocialsHeader />
+      </SidebarHeader>
+      <SidebarContent>
+        <Sponsors />
+        <SidebarSeparator className="mx-0" />
+        <Contributors />
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton className="text-xs justify-center text-muted-foreground">
+              <Link
+                href="https://github.com/uara-ai/lockedin/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                lockedin v0.0.1
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}

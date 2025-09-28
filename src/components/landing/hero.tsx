@@ -27,13 +27,9 @@ export default function HeroSection() {
           <div className="m-auto max-w-5xl px-6">
             <div className="flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
               <div className="flex w-full justify-between lg:w-auto">
-                <Link
-                  href="/"
-                  aria-label="home"
-                  className="flex items-center space-x-2"
-                >
+                <div aria-label="home" className="flex items-center space-x-2">
                   <Logo />
-                </Link>
+                </div>
 
                 <button
                   onClick={() => setMenuState(!menuState)}
@@ -80,10 +76,7 @@ export default function HeroSection() {
           <div className="relative mx-auto max-w-5xl px-6 py-28 lg:py-20">
             <div className="lg:flex lg:items-center lg:gap-12">
               <div className="relative z-10 mx-auto max-w-xl text-center lg:ml-0 lg:w-1/2 lg:text-left">
-                <Link
-                  href="/"
-                  className="rounded-(--radius) mx-auto flex w-fit items-center gap-2 border p-1 pr-3 lg:ml-0"
-                >
+                <div className="rounded-(--radius) mx-auto flex w-fit items-center gap-2 border p-1 pr-3 lg:ml-0">
                   <span className="border border-border rounded-md px-2 py-2 text-xs">
                     <Logo className="text-sm" />
                   </span>
@@ -91,7 +84,7 @@ export default function HeroSection() {
                   <span className="bg-(--color-border) block h-4 w-px"></span>
 
                   <ArrowRight className="size-4" />
-                </Link>
+                </div>
 
                 <h1 className="mt-10 text-balance text-4xl font-bold md:text-5xl xl:text-5xl tracking-wide">
                   Open-Source LinkedIn alternative for people who ship
