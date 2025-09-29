@@ -5,6 +5,7 @@ import {
   Blocks,
   Calendar,
   MessageCircleQuestion,
+  Plus,
   Settings2,
   Trash2,
 } from "lucide-react";
@@ -26,6 +27,8 @@ import {
   IconFlame,
   IconUser,
 } from "@tabler/icons-react";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 // This is sample data.
 const data = {
@@ -64,6 +67,12 @@ export function SidebarLeft({
         <div className="py-4 px-2 border-b">
           <Logo />
         </div>
+        <Button variant="outline" className="w-full" asChild>
+          <Link href="/feed/new">
+            <Plus />
+            New Post
+          </Link>
+        </Button>
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>

@@ -94,7 +94,7 @@ export default async function UserProfilePage({
               <div className="bg-card border rounded-lg p-6 text-center">
                 <h3 className="text-lg font-semibold mb-2">No GitHub Data</h3>
                 <p className="text-sm text-muted-foreground">
-                  This user hasn't connected their GitHub account
+                  This user hasn&apos;t connected their GitHub account
                 </p>
               </div>
             )}

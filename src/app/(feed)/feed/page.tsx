@@ -1,118 +1,126 @@
-import { getAllPublicUsers, getPublicUsersCount } from "@/app/data/profile";
-import { ProfileCard } from "@/components/feed/profile/public/profile-card";
-import { Suspense } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { getPosts, type PostWithDetails } from "@/app/data/posts";
+import { FeedContainer } from "@/components/feed/feed-container";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Loading component for profile cards
-function ProfileCardSkeleton() {
+// Loading component for post cards
+function PostCardSkeleton() {
   return (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-20 w-20 rounded-full" />
+    <div className="space-y-4 p-6 border rounded-lg">
+      <div className="flex items-start gap-3">
+        <Skeleton className="h-10 w-10 rounded-full" />
         <div className="space-y-2 flex-1">
-          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-5 w-32" />
           <Skeleton className="h-4 w-24" />
         </div>
-        <Skeleton className="h-8 w-16" />
       </div>
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-3/4" />
-      <div className="flex gap-4">
-        <Skeleton className="h-4 w-16" />
-        <Skeleton className="h-4 w-16" />
-        <Skeleton className="h-4 w-16" />
+      <Skeleton className="h-4 w-1/2" />
+      <div className="flex gap-4 pt-3 border-t">
+        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-8 w-16" />
       </div>
     </div>
   );
 }
 
-// Loading grid for multiple skeletons
+// Loading skeleton for feed
 function FeedSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <Skeleton className="h-8 w-48 mx-auto mb-2" />
-        <Skeleton className="h-4 w-64 mx-auto" />
-      </div>
-      <div className="flex flex-col w-full gap-6">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="w-full border rounded-lg">
-            <ProfileCardSkeleton />
+      {/* Create Post Skeleton */}
+      <div className="border rounded-lg p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-48" />
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-async function FeedContent() {
-  // Fetch public users and total count
-  const [usersResponse, countResponse] = await Promise.all([
-    getAllPublicUsers(50), // Get first 50 users
-    getPublicUsersCount(),
-  ]);
-
-  if (!usersResponse.success || !usersResponse.data) {
-    return (
-      <div className="text-center py-12">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-foreground">
-            No Builders Found
-          </h2>
-          <p className="text-muted-foreground">
-            Be the first to join the LockedIn community!
-          </p>
+        </div>
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <div className="flex justify-end">
+          <Skeleton className="h-10 w-24" />
         </div>
       </div>
-    );
-  }
 
-  const users = usersResponse.data;
-  const totalUsers = countResponse.success
-    ? countResponse.data!.count
-    : users.length;
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">LockedIn People</h1>
-        <p className="text-muted-foreground">
-          <span className="font-bold text-orange-500">{totalUsers}</span> people
-          sharing their journey on LockedIn
-        </p>
-      </div>
-
-      {/* Users Flex Layout */}
-      <div className="flex flex-col w-full gap-6">
-        {users.map((user) => (
-          <div key={user.id} className="w-full border-b p-4">
-            <ProfileCard profile={user} isPublic={true} className="w-full" />
-          </div>
+      {/* Posts List Skeleton */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-9 w-20" />
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <PostCardSkeleton key={i} />
         ))}
       </div>
-
-      {/* Load More Message */}
-      {users.length >= 50 && totalUsers > 50 && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">
-            Showing {users.length} of {totalUsers} builders
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            More builders coming soon! 🚀
-          </p>
-        </div>
-      )}
     </div>
   );
 }
 
 export default function FeedPage() {
+  const [initialPosts, setInitialPosts] = useState<PostWithDetails[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load initial posts
+  useEffect(() => {
+    const loadInitialPosts = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const postsResponse = await getPosts(10, 0);
+
+        if (postsResponse.success && postsResponse.data) {
+          setInitialPosts(postsResponse.data);
+        } else {
+          setError(postsResponse.error || "Failed to load posts");
+        }
+      } catch (error) {
+        console.error("Error loading initial posts:", error);
+        setError("Something went wrong loading the posts");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialPosts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        <FeedSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full px-4 py-6">
+        <div className="text-center py-12">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-foreground">
+              Unable to Load Feed
+            </h2>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full px-4 py-4">
-      <Suspense fallback={<FeedSkeleton />}>
-        <FeedContent />
-      </Suspense>
+    <div className="w-full px-2">
+      <div className="space-y-4">
+        {/* Feed Container */}
+        <FeedContainer initialPosts={initialPosts} />
+      </div>
     </div>
   );
 }
