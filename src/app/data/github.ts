@@ -1,7 +1,7 @@
 "use server";
 
-import type { ActionResponse } from "@/actions/types/action-response";
-import { appErrors } from "@/actions/types/errors";
+import type { ActionResponse } from "@/app/data/types/action-response";
+import { appErrors } from "@/app/data/types/errors";
 
 export interface GitHubContributor {
   id: number;

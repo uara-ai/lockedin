@@ -3,8 +3,8 @@
 import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "@/actions/types/action-response";
-import { appErrors } from "@/actions/types/errors";
+import type { ActionResponse } from "@/app/actions/types/action-response";
+import { appErrors } from "@/app/actions/types/errors";
 import { createHash } from "crypto";
 
 const schema = z.object({

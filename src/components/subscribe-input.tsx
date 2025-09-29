@@ -1,6 +1,6 @@
 "use client";
 
-import { subscribeAction, getSubscriberCount } from "@/actions/waitlist";
+import { subscribeAction, getSubscriberCount } from "@/app/actions/waitlist";
 import { Check, Loader2, Mail, SendHorizontal } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";

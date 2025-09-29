@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import {
   getGitHubContributors,
   type GitHubContributor,
-} from "@/actions/github";
+} from "@/app/data/github";
 import Link from "next/link";
 
 // Company logo component
