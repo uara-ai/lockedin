@@ -11,9 +11,52 @@ export interface GitHubContributionData {
   totalContributions: number;
 }
 
+interface CachedContributionData {
+  data: GitHubContributionData;
+  timestamp: number;
+  username: string;
+}
+
+// In-memory cache for GitHub contributions
+const contributionCache = new Map<string, CachedContributionData>();
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+
+/**
+ * Check if cached data is still valid (less than 1 hour old)
+ */
+function isCacheValid(cachedData: CachedContributionData): boolean {
+  const now = Date.now();
+  return now - cachedData.timestamp < CACHE_DURATION;
+}
+
+/**
+ * Get cached data if available and valid
+ */
+function getCachedData(username: string): GitHubContributionData | null {
+  const cached = contributionCache.get(username);
+  if (cached && isCacheValid(cached)) {
+    console.log("🔄 Using cached GitHub data for:", username);
+    return cached.data;
+  }
+  return null;
+}
+
+/**
+ * Cache the GitHub contribution data
+ */
+function setCachedData(username: string, data: GitHubContributionData): void {
+  contributionCache.set(username, {
+    data,
+    timestamp: Date.now(),
+    username,
+  });
+  console.log("💾 Cached GitHub data for:", username);
+}
+
 /**
  * Fetch GitHub contribution data for a user
  * Returns last 365 days of contribution data
+ * Cached for 1 hour to improve performance
  */
 export async function fetchGitHubContributions(
   username: string
@@ -26,14 +69,25 @@ export async function fetchGitHubContributions(
       };
     }
 
-    const githubToken = process.env.GITHUB_TOKEN;
-
-    // If no token, return mock data
-    if (!githubToken) {
-      console.log("🔄 No GitHub token, using mock data for:", username);
+    // Check cache first
+    const cachedData = getCachedData(username);
+    if (cachedData) {
       return {
         success: true,
-        data: generateMockData(),
+        data: cachedData,
+      };
+    }
+
+    const githubToken = process.env.GITHUB_TOKEN;
+
+    // If no token, return mock data (but still cache it)
+    if (!githubToken) {
+      console.log("🔄 No GitHub token, using mock data for:", username);
+      const mockData = generateMockData();
+      setCachedData(username, mockData);
+      return {
+        success: true,
+        data: mockData,
       };
     }
 
@@ -73,9 +127,11 @@ export async function fetchGitHubContributions(
 
     if (!response.ok) {
       console.warn("⚠️ GitHub API error, using mock data");
+      const mockData = generateMockData();
+      setCachedData(username, mockData);
       return {
         success: true,
-        data: generateMockData(),
+        data: mockData,
       };
     }
 
@@ -83,9 +139,11 @@ export async function fetchGitHubContributions(
 
     if (data.errors || !data.data?.user) {
       console.warn("⚠️ GitHub user not found, using mock data");
+      const mockData = generateMockData();
+      setCachedData(username, mockData);
       return {
         success: true,
-        data: generateMockData(),
+        data: mockData,
       };
     }
 
@@ -104,24 +162,31 @@ export async function fetchGitHubContributions(
       });
     });
 
+    const githubData = {
+      contributions,
+      totalContributions: calendar.totalContributions,
+    };
+
     console.log("✅ GitHub data fetched:", {
       totalContributions: calendar.totalContributions,
       daysWithData: contributions.length,
       sampleData: contributions.slice(0, 3),
     });
 
+    // Cache the successful response
+    setCachedData(username, githubData);
+
     return {
       success: true,
-      data: {
-        contributions,
-        totalContributions: calendar.totalContributions,
-      },
+      data: githubData,
     };
   } catch (error) {
     console.error("❌ GitHub fetch error:", error);
+    const mockData = generateMockData();
+    setCachedData(username, mockData);
     return {
       success: true,
-      data: generateMockData(),
+      data: mockData,
     };
   }
 }
