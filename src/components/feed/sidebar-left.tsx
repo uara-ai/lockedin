@@ -15,8 +15,8 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
+import { NavMain } from "@/components/feed/nav-main";
+import { NavSecondary } from "@/components/feed/nav-secondary";
 import {
   Sidebar,
   SidebarContent,
@@ -24,8 +24,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Logo } from "./logo";
-import { NavUser } from "./nav-user";
+import { Logo } from "@/components/logo";
+import { NavUser } from "@/components/feed/nav-user";
 
 // This is sample data.
 const data = {
