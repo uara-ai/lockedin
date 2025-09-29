@@ -71,12 +71,17 @@ export function ProfileCard({
   useEffect(() => {
     const checkCurrentFollowStatus = async () => {
       if (!isPublic || !profile.id) return;
-      
+
       setIsCheckingStatus(true);
       try {
         const result = await checkFollowStatus(profile.id);
         if (result.success && result.data) {
           setIsFollowing(result.data.isFollowing);
+        } else if (
+          result.error === "You must be logged in to perform this action"
+        ) {
+          // User is not authenticated, don't show follow button as enabled
+          setIsFollowing(false);
         }
       } catch (error) {
         console.error("Error checking follow status:", error);
@@ -103,7 +108,11 @@ export function ProfileCard({
   }, [followersCount, displayCount, formatNumber]);
 
   const handleFollowToggle = () => {
-    if (!isPublic) return;
+    if (!isPublic || isCheckingStatus) return;
+
+    // Store previous state for rollback on error
+    const previousFollowState = isFollowing;
+    const previousFollowersCount = followersCount;
 
     startTransition(async () => {
       try {
@@ -119,10 +128,16 @@ export function ProfileCard({
               : `You unfollowed ${profile.name || profile.username}`
           );
         } else {
+          // Rollback on error
+          setIsFollowing(previousFollowState);
+          setFollowersCount(previousFollowersCount);
           toast.error(result.error || "Failed to update follow status");
         }
       } catch (error) {
         console.error("Follow toggle error:", error);
+        // Rollback on error
+        setIsFollowing(previousFollowState);
+        setFollowersCount(previousFollowersCount);
         toast.error("Something went wrong. Please try again.");
       }
     });
@@ -193,9 +208,9 @@ export function ProfileCard({
                 variant={isFollowing ? "outline" : "default"}
                 className="rounded-full min-w-[80px]"
                 onClick={handleFollowToggle}
-                disabled={isPending}
+                disabled={isPending || isCheckingStatus}
               >
-                {isPending ? (
+                {isPending || isCheckingStatus ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : isFollowing ? (
                   <>
