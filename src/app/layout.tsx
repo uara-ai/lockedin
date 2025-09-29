@@ -8,6 +8,7 @@ import {
   AuthKitProvider,
   Impersonation,
 } from "@workos-inc/authkit-nextjs/components";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({
             <NuqsAdapter>{children}</NuqsAdapter>
             <Impersonation />
           </AuthKitProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
