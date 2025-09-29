@@ -110,8 +110,6 @@ export default function HeroSection() {
                   }}
                   className="mt-12 flex flex-col items-center justify-center gap-4 md:flex-row"
                 >
-                  <SubscribeInput />
-                  <p className="text-sm text-muted-foreground">or</p>
                   <div
                     key={1}
                     className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"

@@ -37,7 +37,6 @@ export interface UserProfile {
 export interface ProfileStats {
   revenue_total: number;
   revenue_monthly: number;
-  github_commits: number;
   current_streak: number;
   longest_streak: number;
   total_posts: number;
@@ -423,23 +422,9 @@ export async function getProfileStats(
       },
     });
 
-    // Get GitHub commits from current month
-    const githubStats = await prisma.gitHubStats.aggregate({
-      where: {
-        userId: targetUserId,
-        date: {
-          gte: startOfMonth,
-        },
-      },
-      _sum: {
-        commits: true,
-      },
-    });
-
     const stats: ProfileStats = {
       revenue_total: Number(revenueStats._sum.amount || 0),
       revenue_monthly: Number(monthlyRevenueStats._sum.amount || 0),
-      github_commits: githubStats._sum.commits || 0,
       current_streak: user.currentStreak,
       longest_streak: user.longestStreak,
       total_posts: user._count.posts,

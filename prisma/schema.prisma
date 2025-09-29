@@ -48,7 +48,6 @@ model User {
   activityLogs    ActivityLog[]
   achievements    UserAchievement[]
   revenueAccounts RevenueAccount[]
-  githubStats     GitHubStats[]
   dailyStreaks    DailyStreak[]
 
   @@map("users")
@@ -350,31 +349,4 @@ enum ActivityType {
   GITHUB_MILESTONE
   FOLLOWER_MILESTONE
   CUSTOM_LOG
-}
-
-// GitHub contributions tracking
-model GitHubStats {
-  id     String   @id @default(uuid())
-  userId String
-  date   DateTime // Date for the contribution
-
-  // GitHub metrics
-  commits      Int @default(0)
-  pullRequests Int @default(0)
-  issues       Int @default(0)
-  codeReviews  Int @default(0)
-
-  // Repositories
-  repositoriesContributed Int @default(0)
-
-  // Calculated score
-  contributionScore Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, date])
-  @@map("github_stats")
 }

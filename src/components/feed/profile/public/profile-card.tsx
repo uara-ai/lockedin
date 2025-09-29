@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,6 +9,8 @@ import {
   Flame,
   MessageCircle,
   UserPlus,
+  UserMinus,
+  Loader2,
 } from "lucide-react";
 import type { UserProfile } from "@/app/data/profile";
 import {
@@ -22,26 +26,27 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { useState, useTransition, useEffect, useCallback } from "react";
+import { toggleFollow, checkFollowStatus } from "@/app/data/follows";
+import { toast } from "sonner";
+import { TextRoll } from "@/components/ui/text-roll";
 
 interface ProfileCardProps {
   profile: UserProfile;
   className?: string;
   isPublic?: boolean;
+  initialIsFollowing?: boolean;
+  initialFollowersCount?: number;
 }
 
 export function ProfileCard({
   profile,
   className,
   isPublic = false,
+  initialIsFollowing = false,
+  initialFollowersCount,
 }: ProfileCardProps) {
-  const formatJoinDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatNumber = (num: number) => {
+  const formatNumber = useCallback((num: number) => {
     if (num >= 1000000) {
       return `${(num / 1000000).toFixed(1)}M`;
     }
@@ -49,6 +54,85 @@ export function ProfileCard({
       return `${(num / 1000).toFixed(1)}K`;
     }
     return num.toString();
+  }, []);
+
+  const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
+  const [followersCount, setFollowersCount] = useState(
+    initialFollowersCount ?? profile.followers_count
+  );
+  const [isPending, startTransition] = useTransition();
+  const [shouldAnimateCount, setShouldAnimateCount] = useState(false);
+  const [displayCount, setDisplayCount] = useState(
+    formatNumber(initialFollowersCount ?? profile.followers_count)
+  );
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+
+  // Effect to check current follow status on mount and profile change
+  useEffect(() => {
+    const checkCurrentFollowStatus = async () => {
+      if (!isPublic || !profile.id) return;
+      
+      setIsCheckingStatus(true);
+      try {
+        const result = await checkFollowStatus(profile.id);
+        if (result.success && result.data) {
+          setIsFollowing(result.data.isFollowing);
+        }
+      } catch (error) {
+        console.error("Error checking follow status:", error);
+        // Keep the initial state if check fails
+      } finally {
+        setIsCheckingStatus(false);
+      }
+    };
+
+    checkCurrentFollowStatus();
+  }, [profile.id, isPublic]);
+
+  // Effect to animate followers count when it changes
+  useEffect(() => {
+    const newFormattedCount = formatNumber(followersCount);
+    if (newFormattedCount !== displayCount) {
+      setShouldAnimateCount(true);
+      // Update display count after a brief delay to allow animation
+      const timer = setTimeout(() => {
+        setDisplayCount(newFormattedCount);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [followersCount, displayCount, formatNumber]);
+
+  const handleFollowToggle = () => {
+    if (!isPublic) return;
+
+    startTransition(async () => {
+      try {
+        const result = await toggleFollow(profile.id);
+
+        if (result.success && result.data) {
+          setIsFollowing(result.data.isFollowing);
+          setFollowersCount(result.data.followersCount);
+
+          toast.success(
+            result.data.isFollowing
+              ? `You are now following ${profile.name || profile.username}`
+              : `You unfollowed ${profile.name || profile.username}`
+          );
+        } else {
+          toast.error(result.error || "Failed to update follow status");
+        }
+      } catch (error) {
+        console.error("Follow toggle error:", error);
+        toast.error("Something went wrong. Please try again.");
+      }
+    });
+  };
+
+  const formatJoinDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
   };
 
   return (
@@ -104,8 +188,26 @@ export function ProfileCard({
         <div className="flex justify-end ml-auto gap-2">
           {isPublic && (
             <>
-              <Button size="sm" className="rounded-full">
-                Follow
+              <Button
+                size="sm"
+                variant={isFollowing ? "outline" : "default"}
+                className="rounded-full min-w-[80px]"
+                onClick={handleFollowToggle}
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : isFollowing ? (
+                  <>
+                    <UserMinus className="size-4 mr-1" />
+                    Unfollow
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="size-4 mr-1" />
+                    Follow
+                  </>
+                )}
               </Button>
             </>
           )}
@@ -189,7 +291,17 @@ export function ProfileCard({
           </div>
           <div className="flex items-center gap-1">
             <span className="font-semibold text-foreground">
-              {formatNumber(profile.followers_count)}
+              {shouldAnimateCount ? (
+                <TextRoll
+                  duration={0.3}
+                  className="inline-block"
+                  onAnimationComplete={() => setShouldAnimateCount(false)}
+                >
+                  {displayCount}
+                </TextRoll>
+              ) : (
+                displayCount
+              )}
             </span>
             <span className="text-muted-foreground">Followers</span>
           </div>
