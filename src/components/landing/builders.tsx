@@ -5,25 +5,24 @@ import Link from "next/link";
 import { IconRosetteDiscountCheck } from "@tabler/icons-react";
 import Image from "next/image";
 import { Members } from "../feed/members";
+import { getBuildersData } from "@/app/data/profile";
+import { unstable_cache } from "next/cache";
 
-// Mock builders data - this would come from your database
-const mockBuilders = [
-  {
-    id: "1",
-    username: "fed",
-    name: "Fed",
-    avatar: "/fed.jpg",
-    verified: true,
-    revenue: 0,
-    bio: "i'm the boss of this app. currently alone :(",
-    streak: Math.floor(
-      (Date.now() - new Date("2025-09-28").getTime()) / (1000 * 60 * 60 * 24)
-    ),
+// Cached version of getBuildersData with 1-hour revalidation
+const getCachedBuildersData = unstable_cache(
+  async (limit: number) => {
+    return await getBuildersData(limit);
   },
-];
+  ["builders-data"],
+  {
+    revalidate: 3600, // 1 hour in seconds
+    tags: ["builders"],
+  }
+);
 
-export function Builders() {
-  const builders = mockBuilders;
+export async function Builders() {
+  const buildersResponse = await getCachedBuildersData(9); // Get 9 builders (3x3 grid minus 1 for the empty card)
+  const builders = buildersResponse.success ? buildersResponse.data : [];
 
   // Generate initials from name
   const getInitials = (name: string) => {
@@ -33,17 +32,6 @@ export function Builders() {
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
-
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000) {
-      return `$${(amount / 1000000).toFixed(1)}M`;
-    }
-    if (amount >= 1000) {
-      return `$${(amount / 1000).toFixed(0)}K`;
-    }
-    return `$${amount}`;
   };
 
   return (
@@ -58,7 +46,7 @@ export function Builders() {
 
         {/* Builders Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {builders.map((builder) => (
+          {builders?.map((builder) => (
             <Link
               key={builder.id}
               href={`/${builder.username}`}
@@ -75,14 +63,14 @@ export function Builders() {
                     {builder.avatar ? (
                       <Image
                         src={builder.avatar}
-                        alt={builder.name}
+                        alt={builder.name || builder.username || "User"}
                         className="w-full h-full object-cover"
                         width={48}
                         height={48}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-sm font-medium">
-                        {getInitials(builder.name)}
+                        {getInitials(builder.name || builder.username || "U")}
                       </div>
                     )}
                   </div>
@@ -91,7 +79,7 @@ export function Builders() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-foreground truncate">
-                      {builder.name}
+                      {builder.name || builder.username}
                     </span>
                     {builder.verified && (
                       <IconRosetteDiscountCheck className="h-4 w-4 fill-blue-500 flex-shrink-0" />
@@ -105,23 +93,23 @@ export function Builders() {
 
               {/* Bio */}
               <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                {builder.bio}
+                {builder.bio || "Building something amazing..."}
               </p>
 
               {/* Stats */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-green-600">
-                      {formatCurrency(builder.revenue)}
+                    <div className="text-sm font-semibold text-muted-foreground">
+                      {builder.posts_count}
                     </div>
-                    <div className="text-xs text-muted-foreground">revenue</div>
+                    <div className="text-xs text-muted-foreground">posts</div>
                   </div>
 
                   <div>
                     <div className="text-sm font-semibold flex items-center gap-1">
                       <Flame className="h-3 w-3 text-orange-500 fill-current" />
-                      {builder.streak}
+                      {builder.currentStreak}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       day streak

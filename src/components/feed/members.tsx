@@ -26,7 +26,8 @@ export async function Members() {
             </div>
             <div className="flex items-center gap-2">
               <div className="text-xl font-bold text-orange-500">
-                {formatNumber(membersCount)}
+                {formatNumber(membersCount - 1)}{" "}
+                {/* -1 because we don't count the dev user */}
               </div>
               <div className="text-xs text-muted-foreground">
                 members joined

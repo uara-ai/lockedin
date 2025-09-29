@@ -313,6 +313,8 @@ export async function updateUserProfile(
     revalidateTag(`user-${authUser.id}`);
     revalidatePath("/profile");
     revalidatePath(`/profile/${updatedUser.username}`);
+    // Revalidate builders cache since profile updates might affect the showcase
+    revalidateTag("builders");
 
     return {
       success: true,
@@ -930,6 +932,148 @@ export async function getUsersCount(): Promise<number> {
   } catch (error) {
     console.error("Error fetching users count:", error);
     return 0;
+  }
+}
+
+// Revalidate builders cache (useful for admin actions or profile updates)
+export async function revalidateBuildersCache(): Promise<void> {
+  revalidateTag("builders");
+}
+
+// Get builders for showcase (fed always first, exclude dev)
+export async function getBuildersData(
+  limit: number = 20
+): Promise<ActionResponse<UserProfile[]>> {
+  try {
+    // First, try to get the "fed" user
+    const fedUser = await prisma.user.findFirst({
+      where: {
+        username: "fed",
+        isPublic: true,
+      },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        bio: true,
+        avatar: true,
+        website: true,
+        location: true,
+        joinedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        isPublic: true,
+        verified: true,
+        currentStreak: true,
+        longestStreak: true,
+        lastActivityDate: true,
+        githubUsername: true,
+        githubSyncEnabled: true,
+        xUsername: true,
+        xSyncEnabled: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
+      },
+    });
+
+    // Get other public users (excluding fed and dev)
+    const excludeUsernames = ["dev"];
+    if (fedUser) {
+      excludeUsernames.push("fed");
+    }
+
+    const otherUsers = await prisma.user.findMany({
+      where: {
+        isPublic: true,
+        username: {
+          not: null,
+          notIn: excludeUsernames,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        bio: true,
+        avatar: true,
+        website: true,
+        location: true,
+        joinedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        isPublic: true,
+        verified: true,
+        currentStreak: true,
+        longestStreak: true,
+        lastActivityDate: true,
+        githubUsername: true,
+        githubSyncEnabled: true,
+        xUsername: true,
+        xSyncEnabled: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
+      },
+      orderBy: [
+        { verified: "desc" }, // Verified users first
+        { currentStreak: "desc" }, // Then by streak
+        { createdAt: "desc" }, // Then by join date
+      ],
+      take: fedUser ? limit - 1 : limit, // Leave space for fed if exists
+    });
+
+    // Combine results with fed first
+    const allUsers = [];
+    if (fedUser) {
+      allUsers.push(fedUser);
+    }
+    allUsers.push(...otherUsers);
+
+    const profiles: UserProfile[] = allUsers.map((dbUser) => ({
+      id: dbUser.id,
+      email: "", // Don't expose email in public listings
+      username: dbUser.username,
+      name: dbUser.name,
+      bio: dbUser.bio,
+      avatar: dbUser.avatar,
+      website: dbUser.website,
+      location: dbUser.location,
+      joinedAt: dbUser.joinedAt,
+      createdAt: dbUser.createdAt,
+      updatedAt: dbUser.updatedAt,
+      isPublic: dbUser.isPublic,
+      verified: dbUser.verified,
+      currentStreak: dbUser.currentStreak,
+      longestStreak: dbUser.longestStreak,
+      lastActivityDate: dbUser.lastActivityDate,
+      githubUsername: dbUser.githubUsername,
+      githubSyncEnabled: dbUser.githubSyncEnabled,
+      xUsername: dbUser.xUsername,
+      xSyncEnabled: dbUser.xSyncEnabled,
+      followers_count: dbUser._count.followers,
+      following_count: dbUser._count.following,
+      posts_count: dbUser._count.posts,
+    }));
+
+    return {
+      success: true,
+      data: profiles,
+    };
+  } catch (error) {
+    console.error("Error fetching builders data:", error);
+    return {
+      success: false,
+      error: appErrors.UNEXPECTED_ERROR,
+    };
   }
 }
 

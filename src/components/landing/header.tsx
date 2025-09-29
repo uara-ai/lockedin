@@ -9,6 +9,7 @@ import { IconLock } from "@tabler/icons-react";
 
 const menuItems = [
   { name: "Builders", href: "#builders" },
+  { name: "Feed", href: "/feed" },
   { name: "Features", href: "#features" },
   { name: "Pricing", href: "#pricing" },
 ];
