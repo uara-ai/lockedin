@@ -223,7 +223,7 @@ export function Featured() {
 
             {/* Be Featured Button - Always visible */}
             <Link
-              href="/featured/apply"
+              href="/apply"
               className={cn(
                 "flex items-center justify-center gap-2 p-2 rounded-lg",
                 "border-2 border-dashed border-orange-500/30",

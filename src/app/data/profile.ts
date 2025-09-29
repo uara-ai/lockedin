@@ -802,4 +802,132 @@ export async function syncUserFromWorkOS(): Promise<
   }
 }
 
+// Get all public users for feed
+export async function getAllPublicUsers(
+  limit: number = 20,
+  offset: number = 0
+): Promise<ActionResponse<UserProfile[]>> {
+  try {
+    const dbUsers = await prisma.user.findMany({
+      where: {
+        isPublic: true,
+        username: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        email: false, // Don't expose email in public listings
+        username: true,
+        name: true,
+        bio: true,
+        avatar: true,
+        website: true,
+        location: true,
+        joinedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        isPublic: true,
+        verified: true,
+        currentStreak: true,
+        longestStreak: true,
+        lastActivityDate: true,
+        githubUsername: true,
+        githubSyncEnabled: true,
+        xUsername: true,
+        xSyncEnabled: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
+      },
+      orderBy: [
+        { verified: "desc" }, // Verified users first
+        { currentStreak: "desc" }, // Then by streak
+        { createdAt: "desc" }, // Then by join date
+      ],
+      take: limit,
+      skip: offset,
+    });
+
+    const profiles: UserProfile[] = dbUsers.map((dbUser) => ({
+      id: dbUser.id,
+      email: "", // Don't expose email
+      username: dbUser.username,
+      name: dbUser.name,
+      bio: dbUser.bio,
+      avatar: dbUser.avatar,
+      website: dbUser.website,
+      location: dbUser.location,
+      joinedAt: dbUser.joinedAt,
+      createdAt: dbUser.createdAt,
+      updatedAt: dbUser.updatedAt,
+      isPublic: dbUser.isPublic,
+      verified: dbUser.verified,
+      currentStreak: dbUser.currentStreak,
+      longestStreak: dbUser.longestStreak,
+      lastActivityDate: dbUser.lastActivityDate,
+      githubUsername: dbUser.githubUsername,
+      githubSyncEnabled: dbUser.githubSyncEnabled,
+      xUsername: dbUser.xUsername,
+      xSyncEnabled: dbUser.xSyncEnabled,
+      followers_count: dbUser._count.followers,
+      following_count: dbUser._count.following,
+      posts_count: dbUser._count.posts,
+    }));
+
+    return {
+      success: true,
+      data: profiles,
+    };
+  } catch (error) {
+    console.error("Error fetching public users:", error);
+    return {
+      success: false,
+      error: appErrors.UNEXPECTED_ERROR,
+    };
+  }
+}
+
+// Get total count of public users
+export async function getPublicUsersCount(): Promise<
+  ActionResponse<{ count: number }>
+> {
+  try {
+    const count = await prisma.user.count({
+      where: {
+        isPublic: true,
+        username: {
+          not: null,
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: { count },
+    };
+  } catch (error) {
+    console.error("Error fetching public users count:", error);
+    return {
+      success: false,
+      error: appErrors.UNEXPECTED_ERROR,
+    };
+  }
+}
+
+// Get total count of all users (just the number)
+export async function getUsersCount(): Promise<number> {
+  try {
+    const count = await prisma.user.count();
+    return count;
+  } catch (error) {
+    console.error("Error fetching users count:", error);
+    return 0;
+  }
+}
+
 // Cursor rules applied correctly.

@@ -20,7 +20,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
 import { NavUser } from "@/components/feed/nav-user";
-import { IconBrandFeedly, IconFlame, IconUser } from "@tabler/icons-react";
+import {
+  IconBrandFeedly,
+  IconBrandX,
+  IconFlame,
+  IconUser,
+} from "@tabler/icons-react";
 
 // This is sample data.
 const data = {
@@ -35,12 +40,17 @@ const data = {
       url: "/featured",
       icon: IconFlame,
     },
-  ],
-  navSecondary: [
     {
       title: "Profile",
       url: "/profile",
       icon: IconUser,
+    },
+  ],
+  navSecondary: [
+    {
+      title: "Follow me",
+      url: "https://x.com/locked_fed",
+      icon: IconBrandX,
     },
   ],
 };

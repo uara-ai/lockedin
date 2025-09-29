@@ -10,11 +10,10 @@ export default function BeFeaturedPage() {
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-3">
             <IconFlame className="size-6 text-orange-500 fill-current" />
-            <h1 className="text-3xl font-bold text-foreground">Be featured</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              Be featured in this section
+            </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-md mx-auto">
-            Reach me on X to be featured on LockedIn and showcase your journey
-          </p>
         </div>
 
         <Button asChild>

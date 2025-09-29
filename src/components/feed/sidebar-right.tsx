@@ -15,6 +15,7 @@ import { Contributors } from "./contributors";
 import { SocialsHeader } from "./socials-header";
 import Link from "next/link";
 import { Featured } from "./featured";
+import { Members } from "./members";
 
 export function SidebarRight({
   ...props
@@ -34,6 +35,8 @@ export function SidebarRight({
         <Contributors />
         <SidebarSeparator className="mx-0" />
         <Featured />
+        <SidebarSeparator className="mx-0" />
+        <Members />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
