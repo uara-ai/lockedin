@@ -19,9 +19,7 @@ export function FeedHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage className="line-clamp-1">
-                Project Management & Task Tracking
-              </BreadcrumbPage>
+              <BreadcrumbPage className="line-clamp-1"></BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

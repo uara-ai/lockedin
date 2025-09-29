@@ -2,16 +2,10 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
   Blocks,
   Calendar,
-  Command,
-  Home,
-  Inbox,
   MessageCircleQuestion,
-  Search,
   Settings2,
-  Sparkles,
   Trash2,
 } from "lucide-react";
 
@@ -26,80 +20,27 @@ import {
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
 import { NavUser } from "@/components/feed/nav-user";
+import { IconBrandFeedly, IconFlame, IconUser } from "@tabler/icons-react";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: Command,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
+      title: "Feed",
+      url: "/feed",
+      icon: IconBrandFeedly,
     },
     {
-      title: "Ask AI",
-      url: "#",
-      icon: Sparkles,
-    },
-    {
-      title: "Home",
-      url: "#",
-      icon: Home,
-      isActive: true,
-    },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-      badge: "10",
+      title: "Featured",
+      url: "/featured",
+      icon: IconFlame,
     },
   ],
   navSecondary: [
     {
-      title: "Calendar",
-      url: "#",
-      icon: Calendar,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-    },
-    {
-      title: "Templates",
-      url: "#",
-      icon: Blocks,
-    },
-    {
-      title: "Trash",
-      url: "#",
-      icon: Trash2,
-    },
-    {
-      title: "Help",
-      url: "#",
-      icon: MessageCircleQuestion,
+      title: "Profile",
+      url: "/profile",
+      icon: IconUser,
     },
   ],
 };

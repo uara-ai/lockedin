@@ -323,13 +323,34 @@ export async function getProfileStats(
   username?: string
 ): Promise<ActionResponse<ProfileStats>> {
   try {
-    const { user: authUser } = await withAuth({ ensureSignedIn: true });
-    const targetUserId = userId || authUser.id;
-    const targetUsername = username;
+    let targetUserId = userId;
+
+    // If username is provided, find the user by username first
+    if (username && !userId) {
+      const userByUsername = await prisma.user.findUnique({
+        where: { username },
+        select: { id: true },
+      });
+
+      if (!userByUsername) {
+        return {
+          success: false,
+          error: appErrors.NOT_FOUND,
+        };
+      }
+
+      targetUserId = userByUsername.id;
+    }
+
+    // If no userId and no username, use authenticated user
+    if (!targetUserId) {
+      const { user: authUser } = await withAuth({ ensureSignedIn: true });
+      targetUserId = authUser.id;
+    }
 
     // Fetch user stats efficiently
     const user = await prisma.user.findUnique({
-      where: { id: targetUserId, username: targetUsername },
+      where: { id: targetUserId },
       select: {
         currentStreak: true,
         longestStreak: true,
