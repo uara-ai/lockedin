@@ -4,6 +4,7 @@ import { fetchGitHubContributions } from "@/app/data/github-contribution";
 import { ProfileCard } from "@/components/feed/profile/public/profile-card";
 import { ProfileStats } from "@/components/feed/profile/profile-stats";
 import { ContributionChart } from "@/components/feed/contribution-chart";
+import { ProfileTabs } from "@/components/feed/profile/profile-tabs";
 
 interface UserProfilePageProps {
   params: Promise<{
@@ -38,23 +39,68 @@ export default async function UserProfilePage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mx-auto">
-        <div className="flex flex-col gap-6">
-          {/* Public Profile Card */}
-          <div className="lg:col-span-1">
-            <ProfileCard profile={profileResponse.data} isPublic={true} />
-          </div>
+    <div className="w-full flex flex-col gap-6 p-4">
+      {/* Public Profile Card */}
+      <ProfileCard
+        profile={profileResponse.data}
+        isPublic={true}
+        className="w-full"
+      />
 
-          {/* GitHub Contribution Chart */}
-          {profileResponse.data.githubUsername && githubContributions && (
-            <ContributionChart
-              contributions={githubContributions}
-              className="w-full"
-            />
-          )}
-        </div>
-      </div>
+      {/* Profile Tabs */}
+      <ProfileTabs
+        notes={
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">About</h3>
+            <div className="bg-card border rounded-lg p-4">
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Bio
+                  </label>
+                  <p className="text-sm">
+                    {profileResponse.data.bio || "No bio added"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Location
+                  </label>
+                  <p className="text-sm">
+                    {profileResponse.data.location || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Website
+                  </label>
+                  <p className="text-sm">
+                    {profileResponse.data.website || "Not specified"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        stats={
+          <div className="space-y-4">
+            {/* GitHub Contribution Chart */}
+            {profileResponse.data.githubUsername && githubContributions ? (
+              <ContributionChart
+                contributions={githubContributions}
+                className="w-full"
+              />
+            ) : (
+              <div className="bg-card border rounded-lg p-6 text-center">
+                <h3 className="text-lg font-semibold mb-2">No GitHub Data</h3>
+                <p className="text-sm text-muted-foreground">
+                  This user hasn't connected their GitHub account
+                </p>
+              </div>
+            )}
+          </div>
+        }
+      />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { GitHubContribution } from "@/app/data/github-contribution";
-import { Calendar, BarChart3 } from "lucide-react";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 interface ContributionChartProps {
   contributions: GitHubContribution[];
@@ -164,11 +164,15 @@ export function ContributionChart({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-medium text-foreground">
+          <h3 className="text-base font-medium text-foreground flex items-center gap-1">
+            <IconBrandGithub className="w-4 h-4" />
             GitHub Activity
           </h3>
           <p className="text-xs text-muted-foreground">
-            {totalContributions.toLocaleString()} contributions
+            <span className="text-primary">
+              {totalContributions.toLocaleString()}
+            </span>{" "}
+            contributions
           </p>
         </div>
 

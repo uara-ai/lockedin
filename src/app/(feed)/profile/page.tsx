@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { getUserProfile, getProfileStats } from "@/app/data/profile";
 import { fetchGitHubContributions } from "@/app/data/github-contribution";
 import { ProfileCard } from "@/components/feed/profile/profile-card";
-import { ProfileStats } from "@/components/feed/profile/profile-stats";
 import { ContributionChart } from "@/components/feed/contribution-chart";
+import { ProfileTabs } from "@/components/feed/profile/profile-tabs";
 
 export default async function ProfilePage() {
   // If the user isn't signed in, they will be automatically redirected to AuthKit
@@ -41,18 +41,31 @@ export default async function ProfilePage() {
       {/* Profile Card */}
       <ProfileCard profile={profileResponse.data} className="w-full" />
 
-      {/* GitHub Contribution Chart */}
-      {profileResponse.data.githubUsername && githubContributions && (
-        <ContributionChart
-          contributions={githubContributions}
-          className="w-full"
-        />
-      )}
-
-      {/* Stats Card - commented out for now
-      {statsResponse.success && statsResponse.data && (
-        <ProfileStats className="w-full max-w-md" />
-      )}*/}
+      {/* Profile Tabs */}
+      <ProfileTabs
+        notes={<p>notes</p>}
+        stats={
+          <div className="space-y-4">
+            {/* GitHub Contribution Chart */}
+            {profileResponse.data.githubUsername && githubContributions ? (
+              <ContributionChart
+                contributions={githubContributions}
+                className="w-full"
+              />
+            ) : (
+              <div className="bg-card border rounded-lg p-6 text-center">
+                <h3 className="text-lg font-semibold mb-2">No GitHub Data</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Connect your GitHub account to see contribution statistics
+                </p>
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm">
+                  Connect GitHub
+                </button>
+              </div>
+            )}
+          </div>
+        }
+      />
     </div>
   );
 }
