@@ -157,6 +157,7 @@ export function ProfileEditForm({
           cleanData.xSyncEnabled = undefined;
         }
 
+        // The updateUserProfile now handles both create and update via upsert
         const response = await updateUserProfile(cleanData);
 
         if (response.success) {

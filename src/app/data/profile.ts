@@ -228,12 +228,29 @@ export async function updateUserProfile(
       }
     }
 
-    // Update user with optimistic locking
-    const updatedUser = await prisma.user.update({
+    // Use upsert to handle both create and update scenarios
+    const updatedUser = await prisma.user.upsert({
       where: { id: authUser.id },
-      data: {
+      update: {
         ...validatedData,
         updatedAt: new Date(),
+      },
+      create: {
+        id: authUser.id,
+        email: authUser.email,
+        name: authUser.firstName
+          ? `${authUser.firstName} ${authUser.lastName || ""}`.trim()
+          : null,
+        avatar: authUser.profilePictureUrl,
+        ...validatedData,
+        // Set defaults for required fields
+        isPublic: validatedData.isPublic ?? true,
+        verified: false,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastActivityDate: null,
+        githubSyncEnabled: validatedData.githubSyncEnabled ?? true,
+        xSyncEnabled: validatedData.xSyncEnabled ?? true,
       },
       select: {
         id: true,
