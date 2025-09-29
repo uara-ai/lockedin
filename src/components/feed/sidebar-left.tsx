@@ -120,7 +120,7 @@ export function SidebarLeft({
       </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
