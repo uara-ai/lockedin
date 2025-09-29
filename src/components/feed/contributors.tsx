@@ -15,6 +15,7 @@ import {
   type GitHubContributor,
 } from "@/app/data/github";
 import Link from "next/link";
+import Image from "next/image";
 
 // Company logo component
 const CompanyLogo = ({ company }: { company?: string }) => {
@@ -176,7 +177,7 @@ export function Contributors() {
                     )}
                   >
                     {contributor.avatar_url ? (
-                      <img
+                      <Image
                         src={contributor.avatar_url}
                         alt={contributor.login}
                         className="w-full h-full object-cover"

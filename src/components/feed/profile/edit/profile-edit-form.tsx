@@ -332,7 +332,7 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
                     <FormControl>
                       <Input placeholder="San Francisco, CA" {...field} />
                     </FormControl>
-                    <FormDescription>Where you're based.</FormDescription>
+                    <FormDescription>Where you&apos;re based.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { IconRosetteDiscountCheck } from "@tabler/icons-react";
+import Image from "next/image";
 
 // Mock featured profiles data - this would come from your database
 const mockFeaturedProfiles = [
@@ -184,7 +185,7 @@ export function Featured() {
                     )}
                   >
                     {profile.avatar ? (
-                      <img
+                      <Image
                         src={profile.avatar}
                         alt={profile.name}
                         className="w-full h-full object-cover"

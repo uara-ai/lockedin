@@ -11,6 +11,7 @@ import { Plus, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 // Sample sponsor data - you can replace this with actual data
 const sponsors = [
@@ -46,7 +47,7 @@ const SponsorLogo = ({
       {!imageLoaded && (
         <span className="text-xs font-medium">{fallbackText}</span>
       )}
-      <img
+      <Image
         src={logoUrl}
         alt={`${name} logo`}
         className={cn(
