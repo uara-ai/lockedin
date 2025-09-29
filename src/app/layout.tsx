@@ -3,6 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { OpenPanelComponent } from "@openpanel/nextjs";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import {
+  AuthKitProvider,
+  Impersonation,
+} from "@workos-inc/authkit-nextjs/components";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +46,10 @@ export default function RootLayout({
             trackScreenViews={true}
             disabled={process.env.NODE_ENV !== "production"}
           />
-          {children}
+          <AuthKitProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+            <Impersonation />
+          </AuthKitProvider>
         </ThemeProvider>
       </body>
     </html>
