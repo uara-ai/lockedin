@@ -54,6 +54,8 @@ const SponsorLogo = ({
           "w-full h-full object-contain p-1 transition-opacity",
           imageLoaded ? "opacity-100" : "opacity-0 absolute"
         )}
+        width={33}
+        height={33}
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
         loading="lazy"

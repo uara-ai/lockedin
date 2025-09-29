@@ -19,18 +19,8 @@ export default async function ProfilePage() {
   ]);
 
   if (!profileResponse.success || !profileResponse.data) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
-            Profile Not Found
-          </h1>
-          <p className="text-muted-foreground">
-            Unable to load profile information.
-          </p>
-        </div>
-      </div>
-    );
+    // If profile doesn't exist, redirect to profile creation
+    redirect("/profile/edit?create=true");
   }
 
   return (

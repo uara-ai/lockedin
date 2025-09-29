@@ -182,6 +182,8 @@ export function Contributors() {
                         alt={contributor.login}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        width={33}
+                        height={33}
                       />
                     ) : (
                       getInitials(contributor.login)

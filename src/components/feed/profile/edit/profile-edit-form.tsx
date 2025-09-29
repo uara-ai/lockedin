@@ -85,9 +85,13 @@ type ProfileEditFormData = z.infer<typeof profileEditSchema>;
 
 interface ProfileEditFormProps {
   initialData: UserProfile;
+  isCreating?: boolean;
 }
 
-export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
+export function ProfileEditForm({
+  initialData,
+  isCreating = false,
+}: ProfileEditFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
@@ -156,11 +160,20 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
         const response = await updateUserProfile(cleanData);
 
         if (response.success) {
-          toast.success("Profile updated successfully!");
+          toast.success(
+            isCreating
+              ? "Profile created successfully! Welcome to LockedIn!"
+              : "Profile updated successfully!"
+          );
           router.push("/profile");
           router.refresh();
         } else {
-          toast.error(response.error || "Failed to update profile");
+          toast.error(
+            response.error ||
+              (isCreating
+                ? "Failed to create profile"
+                : "Failed to update profile")
+          );
         }
       } catch (error) {
         console.error("Error updating profile:", error);
@@ -193,7 +206,9 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
             <div className="flex-1">
               <h3 className="text-lg font-semibold">Profile Picture</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Your profile picture is synced from your WorkOS account
+                {isCreating
+                  ? "Your profile picture is synced from your authentication provider"
+                  : "Your profile picture is synced from your WorkOS account"}
               </p>
               <Button type="button" variant="outline" size="sm" disabled>
                 <IconUpload className="size-4 mr-2" />
@@ -244,8 +259,9 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
                       </div>
                     </div>
                     <FormDescription>
-                      Your unique username. This will be part of your public
-                      profile URL.
+                      {isCreating
+                        ? "Choose a unique username. This will be your public profile URL (e.g., lockedin.com/johndoe)."
+                        : "Your unique username. This will be part of your public profile URL."}
                     </FormDescription>
                     {usernameAvailable === false && (
                       <p className="text-sm text-red-500">
@@ -289,8 +305,9 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    A brief description about yourself. This will be visible on
-                    your public profile.
+                    {isCreating
+                      ? "Tell the LockedIn community about yourself and what you're building. This helps others discover and connect with you."
+                      : "A brief description about yourself. This will be visible on your public profile."}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -409,8 +426,9 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
                         Public Profile
                       </FormLabel>
                       <FormDescription>
-                        Make your profile visible to everyone. Required for
-                        sharing on social media.
+                        {isCreating
+                          ? "Make your profile visible to everyone. This allows others to discover your journey and achievements. Recommended for accountability!"
+                          : "Make your profile visible to everyone. Required for sharing on social media."}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -484,16 +502,24 @@ export function ProfileEditForm({ initialData }: ProfileEditFormProps) {
             className="flex items-center gap-2"
           >
             {isPending && <IconLoader2 className="size-4 animate-spin" />}
-            {isPending ? "Saving..." : "Save Changes"}
+            {isPending
+              ? isCreating
+                ? "Creating Profile..."
+                : "Saving..."
+              : isCreating
+              ? "Create Profile"
+              : "Save Changes"}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/profile")}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
+          {!isCreating && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/profile")}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          )}
         </div>
       </form>
     </Form>

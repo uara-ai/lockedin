@@ -190,6 +190,8 @@ export function Featured() {
                         alt={profile.name}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        width={33}
+                        height={33}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-xs font-medium">
