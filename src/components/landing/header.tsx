@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { IconLock } from "@tabler/icons-react";
 
 const menuItems = [
-  { name: "Features", href: "#features" },
   { name: "Builders", href: "#builders" },
+  { name: "Features", href: "#features" },
   { name: "Pricing", href: "#pricing" },
 ];
 
@@ -101,7 +101,7 @@ export const HeroHeader = () => {
                   <Link href="/login">
                     <span className="flex items-center gap-2">
                       <IconLock className="size-4" />
-                      Jump in
+                      Lock in
                     </span>
                   </Link>
                 </Button>

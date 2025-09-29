@@ -1,5 +1,4 @@
 import { SidebarGroup, SidebarGroupContent } from "@/components/ui/sidebar";
-import { Users } from "lucide-react";
 import { getUsersCount } from "@/app/data/profile";
 import { IconBulb } from "@tabler/icons-react";
 
