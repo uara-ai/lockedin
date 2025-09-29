@@ -5,9 +5,11 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { IconLock } from "@tabler/icons-react";
 
 const menuItems = [
-  { name: "Featured", href: "#featured" },
+  { name: "Features", href: "#features" },
+  { name: "Builders", href: "#builders" },
   { name: "Pricing", href: "#pricing" },
 ];
 
@@ -57,7 +59,12 @@ export const HeroHeader = () => {
                       href={item.href}
                       className="text-muted-foreground hover:text-accent-foreground block duration-150"
                     >
-                      <span>{item.name}</span>
+                      <span className="flex items-center gap-2">
+                        {item.name === "Builders" && (
+                          <div className="size-2 rounded-full bg-orange-500 animate-pulse" />
+                        )}
+                        {item.name}
+                      </span>
                     </Link>
                   </li>
                 ))}
@@ -73,7 +80,12 @@ export const HeroHeader = () => {
                         href={item.href}
                         className="text-muted-foreground hover:text-accent-foreground block duration-150"
                       >
-                        <span>{item.name}</span>
+                        <span className="flex items-center gap-2">
+                          {item.name}
+                          {item.name === "Builders" && (
+                            <div className="size-2 rounded-full bg-orange-500 animate-pulse" />
+                          )}
+                        </span>
                       </Link>
                     </li>
                   ))}
@@ -82,12 +94,15 @@ export const HeroHeader = () => {
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                 <Button
                   asChild
-                  variant="outline"
+                  variant="default"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="/login">
-                    <span>Login</span>
+                    <span className="flex items-center gap-2">
+                      <IconLock className="size-4" />
+                      Jump in
+                    </span>
                   </Link>
                 </Button>
 
