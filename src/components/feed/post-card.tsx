@@ -310,7 +310,10 @@ export function PostCard({
         </div>
 
         {/* Content */}
-        <div className="space-y-3">
+        <Link
+          href={`/post/${post.id}`}
+          className="block space-y-3 hover:bg-muted/30 rounded-lg -mx-2 px-2 py-1 transition-colors"
+        >
           <p className="text-foreground whitespace-pre-wrap leading-relaxed">
             {post.content}
           </p>
@@ -361,7 +364,7 @@ export function PostCard({
               ))}
             </div>
           )}
-        </div>
+        </Link>
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-3 border-t">
