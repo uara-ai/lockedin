@@ -1,0 +1,380 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Core User model with public profile features
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String?  @unique
+  name      String?
+  bio       String?
+  avatar    String?
+  website   String?
+  location  String?
+  joinedAt  DateTime @default(now()) // Badge feature - "Joined at" like streak apps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Profile settings
+  isPublic Boolean @default(true)
+  verified Boolean @default(false)
+
+  // Streak and consistency tracking
+  currentStreak    Int       @default(0)
+  longestStreak    Int       @default(0)
+  lastActivityDate DateTime?
+
+  // GitHub integration
+  githubUsername    String?
+  githubSyncEnabled Boolean @default(true)
+
+  // Socials
+  xUsername    String?
+  xSyncEnabled Boolean @default(true)
+
+  // Relations
+  posts           Post[]
+  likes           Like[]
+  comments        Comment[]
+  followers       Follow[]          @relation("UserFollows")
+  following       Follow[]          @relation("UserFollowing")
+  activityLogs    ActivityLog[]
+  achievements    UserAchievement[]
+  revenueAccounts RevenueAccount[]
+  githubStats     GitHubStats[]
+  dailyStreaks    DailyStreak[]
+
+  @@map("users")
+}
+
+// Enhanced Post model for accountability updates
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Post types for different accountability content
+  type PostType @default(UPDATE)
+
+  // Revenue/achievement related data
+  revenueAmount Decimal?
+  currency      String?
+
+  // GitHub related data
+  commitsCount Int?
+  repoUrl      String?
+
+  // Metrics
+  viewsCount  Int @default(0)
+  sharesCount Int @default(0)
+
+  // Relations
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
+  tags     PostTag[]
+
+  @@map("posts")
+}
+
+enum PostType {
+  UPDATE // General update
+  REVENUE // Revenue milestone
+  ACHIEVEMENT // Achievement unlock
+  STREAK // Streak milestone
+  GITHUB // Code contribution
+  MILESTONE // General milestone
+}
+
+// Post tagging system
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  posts PostTag[]
+
+  @@map("tags")
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+model Like {
+  id     String @id @default(uuid())
+  userId String
+  postId String
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Follow {
+  id          String @id @default(uuid())
+  followerId  String
+  followingId String
+
+  // Relations
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollows", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+// Revenue tracking with Stripe and other providers
+model RevenueAccount {
+  id       String          @id @default(uuid())
+  userId   String
+  provider PaymentProvider
+
+  // Provider-specific IDs
+  stripeAccountId  String?
+  stripeCustomerId String?
+  paypalAccountId  String?
+  lemonsqueezyId   String?
+
+  // Account settings
+  isActive Boolean @default(true)
+  isPublic Boolean @default(true) // For transparent metrics
+  currency String  @default("USD")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revenues RevenueEntry[]
+
+  @@map("revenue_accounts")
+}
+
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  LEMONSQUEEZY
+  GUMROAD
+  PADDLE
+  OTHER
+}
+
+model RevenueEntry {
+  id        String @id @default(uuid())
+  accountId String
+
+  amount      Decimal
+  currency    String
+  description String?
+
+  // Provider transaction data
+  providerTransactionId String?
+  providerFee           Decimal?
+  netAmount             Decimal?
+
+  // Categorization
+  category    RevenueCategory @default(OTHER)
+  productName String?
+
+  // Timing
+  transactionDate DateTime
+  createdAt       DateTime @default(now())
+
+  // Relations
+  account RevenueAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("revenue_entries")
+}
+
+enum RevenueCategory {
+  PRODUCT_SALE
+  SUBSCRIPTION
+  SERVICE
+  AFFILIATE
+  SPONSORSHIP
+  DONATION
+  OTHER
+}
+
+// Daily streak tracking
+model DailyStreak {
+  id     String   @id @default(uuid())
+  userId String
+  date   DateTime @db.Date
+
+  // Activity types
+  hasPosted      Boolean @default(false)
+  hasCommitted   Boolean @default(false)
+  hasRevenue     Boolean @default(false)
+  hasAchievement Boolean @default(false)
+
+  // Calculated
+  isActiveDay Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("daily_streaks")
+}
+
+// Achievement system
+model Achievement {
+  id          String              @id @default(uuid())
+  name        String              @unique
+  description String
+  category    AchievementCategory
+
+  // Visual
+  icon   String? // Icon name or URL
+  color  String? // Hex color
+  rarity AchievementRarity @default(COMMON)
+
+  // Requirements
+  requirementType  RequirementType
+  requirementValue Int // e.g., 10 for "10 consecutive days"
+
+  // Metadata
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  // Relations
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+enum AchievementCategory {
+  STREAK
+  REVENUE
+  SOCIAL
+  GITHUB
+  MILESTONE
+  SPECIAL
+}
+
+enum AchievementRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum RequirementType {
+  CONSECUTIVE_DAYS
+  TOTAL_POSTS
+  TOTAL_REVENUE
+  TOTAL_COMMITS
+  FOLLOWERS_COUNT
+  CUSTOM
+}
+
+model UserAchievement {
+  id            String   @id @default(uuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  // Progress tracking
+  progress    Int     @default(0)
+  isCompleted Boolean @default(false)
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// Activity logging (post-like features)
+model ActivityLog {
+  id       String       @id @default(uuid())
+  userId   String
+  type     ActivityType
+  title    String
+  content  String?
+  metadata Json? // Flexible data storage
+
+  // Visibility
+  isPublic Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
+
+enum ActivityType {
+  STREAK_MILESTONE
+  REVENUE_MILESTONE
+  ACHIEVEMENT_UNLOCKED
+  GITHUB_MILESTONE
+  FOLLOWER_MILESTONE
+  CUSTOM_LOG
+}
+
+// GitHub contributions tracking
+model GitHubStats {
+  id     String   @id @default(uuid())
+  userId String
+  date   DateTime // Date for the contribution
+
+  // GitHub metrics
+  commits      Int @default(0)
+  pullRequests Int @default(0)
+  issues       Int @default(0)
+  codeReviews  Int @default(0)
+
+  // Repositories
+  repositoriesContributed Int @default(0)
+
+  // Calculated score
+  contributionScore Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("github_stats")
+}

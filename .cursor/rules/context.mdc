@@ -1,0 +1,35 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+You are working on **LockedIn**, an open-source LinkedIn alternative for builders, makers, and founders.  
+LockedIn is a **social accountability app** to show consistency, revenues, and achievements.  
+It should feel like a mix of X (Twitter), GitHub contributions, and Stripe dashboards.
+
+## MVP Vision
+
+- Free-to-use, viral-first
+- Public profiles with **cards similar to X profiles**
+- **Joined at** badge (like streak apps) to show how long someone has been active
+- **Stripe revenues by API** (transparent metrics)
+- **GitHub contributions chart** (visual consistency + shipping)
+- **Activity streaks** (daily/weekly logging)
+- Lightweight, fast, no bloat
+- Optimized for **shareability on X**
+
+## Tech Stack
+
+- Next.js (App Router)
+- TailwindCSS + Shadcn UI
+- Supabase (auth + DB)
+- Stripe API for revenue tracking
+- GitHub API for contributions
+
+## Style / Tone
+
+- Minimal, bold, and social-first
+- Optimized for virality and accountability
+- Feels credible for indie hackers and startup founders
+- Build in public mindset
