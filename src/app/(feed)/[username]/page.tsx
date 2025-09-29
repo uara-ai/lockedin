@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { getPublicProfile, getProfileStats } from "@/app/data/profile";
 import { fetchGitHubContributions } from "@/app/data/github-contribution";
+import { getPostsByUsername } from "@/app/data/posts";
 import { ProfileCard } from "@/components/feed/profile/public/profile-card";
 import { ProfileStats } from "@/components/feed/profile/profile-stats";
 import { ContributionChart } from "@/components/feed/contribution-chart";
 import { ProfileTabs } from "@/components/feed/profile/profile-tabs";
+import { PostCard } from "@/components/feed/post-card";
 
 interface UserProfilePageProps {
   params: Promise<{
@@ -17,10 +19,11 @@ export default async function UserProfilePage({
 }: UserProfilePageProps) {
   const { username } = await params;
 
-  // Fetch public profile data by username
-  const [profileResponse, statsResponse] = await Promise.all([
+  // Fetch public profile data, stats, and posts by username
+  const [profileResponse, statsResponse, postsResponse] = await Promise.all([
     getPublicProfile(username),
     getProfileStats(undefined, username),
+    getPostsByUsername(username, 20, 0),
   ]);
 
   if (!profileResponse.success || !profileResponse.data) {
@@ -49,37 +52,43 @@ export default async function UserProfilePage({
 
       {/* Profile Tabs */}
       <ProfileTabs
-        notes={
+        posts={
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">About</h3>
-            <div className="bg-card border rounded-lg p-4">
-              <div className="space-y-3">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Bio
-                  </label>
-                  <p className="text-sm">
-                    {profileResponse.data.bio || "No bio added"}
-                  </p>
+            {postsResponse.success &&
+            postsResponse.data &&
+            postsResponse.data.length > 0 ? (
+              postsResponse.data.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  className="border rounded-lg p-4"
+                />
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-muted-foreground"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Location
-                  </label>
-                  <p className="text-sm">
-                    {profileResponse.data.location || "Not specified"}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Website
-                  </label>
-                  <p className="text-sm">
-                    {profileResponse.data.website || "Not specified"}
-                  </p>
-                </div>
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  No posts yet
+                </h3>
+                <p className="text-muted-foreground">
+                  This user hasn&apos;t shared any posts yet.
+                </p>
               </div>
-            </div>
+            )}
           </div>
         }
         stats={

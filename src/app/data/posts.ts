@@ -1084,4 +1084,163 @@ export async function getPopularTags(
   }
 }
 
+/**
+ * Get posts by user ID
+ */
+export async function getPostsByUser(
+  userId: string,
+  limit: number = 10,
+  offset: number = 0
+): Promise<ActionResponse<PostWithDetails[]>> {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+      skip: offset,
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            avatar: true,
+            verified: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    const postsWithDetails: PostWithDetails[] = posts.map((post: any) => ({
+      id: post.id,
+      content: post.content,
+      type: post.type,
+      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
+      currency: post.currency,
+      commitsCount: post.commitsCount,
+      repoUrl: post.repoUrl,
+      viewsCount: post.viewsCount,
+      sharesCount: post.sharesCount,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      author: post.author,
+      _count: post._count,
+      tags: post.tags,
+      isLiked: false, // Will be checked separately if needed
+    }));
+
+    return {
+      success: true,
+      data: postsWithDetails,
+    };
+  } catch (error) {
+    console.error("Error fetching posts by user:", error);
+    return {
+      success: false,
+      error: appErrors.DATABASE_ERROR,
+    };
+  }
+}
+
+/**
+ * Get posts by username (public)
+ */
+export async function getPostsByUsername(
+  username: string,
+  limit: number = 10,
+  offset: number = 0,
+  currentUserId?: string
+): Promise<ActionResponse<PostWithDetails[]>> {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        author: {
+          username: username,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+      skip: offset,
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            avatar: true,
+            verified: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+        likes: currentUserId
+          ? {
+              where: {
+                userId: currentUserId,
+              },
+              select: {
+                id: true,
+              },
+            }
+          : false,
+      },
+    });
+
+    const postsWithDetails: PostWithDetails[] = posts.map((post: any) => ({
+      id: post.id,
+      content: post.content,
+      type: post.type,
+      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
+      currency: post.currency,
+      commitsCount: post.commitsCount,
+      repoUrl: post.repoUrl,
+      viewsCount: post.viewsCount,
+      sharesCount: post.sharesCount,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      author: post.author,
+      _count: post._count,
+      tags: post.tags,
+      isLiked: currentUserId ? post.likes?.length > 0 : false,
+    }));
+
+    return {
+      success: true,
+      data: postsWithDetails,
+    };
+  } catch (error) {
+    console.error("Error fetching posts by username:", error);
+    return {
+      success: false,
+      error: appErrors.DATABASE_ERROR,
+    };
+  }
+}
+
 // Cursor rules applied correctly.

@@ -1,19 +1,19 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { IconUser, IconFlame } from "@tabler/icons-react";
+import { IconMessage, IconFlame } from "@tabler/icons-react";
 import { useQueryState, parseAsString } from "nuqs";
 
 export function ProfileTabs({
-  notes,
+  posts,
   stats,
 }: {
-  notes: React.ReactNode;
+  posts: React.ReactNode;
   stats: React.ReactNode;
 }) {
   const [tab, setTab] = useQueryState(
     "tab",
-    parseAsString.withDefault("notes")
+    parseAsString.withDefault("posts")
   );
 
   return (
@@ -24,10 +24,10 @@ export function ProfileTabs({
         className="w-full flex flex-col gap-2"
       >
         <TabsList className="w-full gap-8">
-          <TabsTrigger value="notes">
-            <IconUser className="h-4 w-4" />
-            <span className="hidden sm:inline">Notes</span>
-            <span className="sm:hidden">Notes</span>
+          <TabsTrigger value="posts">
+            <IconMessage className="h-4 w-4" />
+            <span className="hidden sm:inline">Posts</span>
+            <span className="sm:hidden">Posts</span>
           </TabsTrigger>
           <TabsTrigger value="stats">
             <IconFlame className="h-4 w-4" />
@@ -36,7 +36,7 @@ export function ProfileTabs({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="notes">{notes}</TabsContent>
+        <TabsContent value="posts">{posts}</TabsContent>
 
         <TabsContent value="stats">{stats}</TabsContent>
       </Tabs>
