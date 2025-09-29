@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Plus } from "lucide-react";
 
 import {
   Sidebar,
@@ -15,6 +14,7 @@ import { Sponsors } from "./sponsors";
 import { Contributors } from "./contributors";
 import { SocialsHeader } from "./socials-header";
 import Link from "next/link";
+import { Featured } from "./featured";
 
 export function SidebarRight({
   ...props
@@ -32,6 +32,8 @@ export function SidebarRight({
         <Sponsors />
         <SidebarSeparator className="mx-0" />
         <Contributors />
+        <SidebarSeparator className="mx-0" />
+        <Featured />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

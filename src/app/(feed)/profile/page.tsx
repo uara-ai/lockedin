@@ -38,10 +38,10 @@ export default async function ProfilePage() {
       {/* Profile Card */}
       <ProfileCard profile={profileResponse.data} className="w-full" />
 
-      {/* Stats Card */}
+      {/* Stats Card 
       {statsResponse.success && statsResponse.data && (
-        <ProfileStats stats={statsResponse.data} className="w-full max-w-md" />
-      )}
+        <ProfileStats className="w-full max-w-md" />
+      )}*/}
     </div>
   );
 }
