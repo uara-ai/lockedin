@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { getPublicProfile, getProfileStats } from "@/app/data/profile";
+import { fetchGitHubContributions } from "@/app/data/github-contribution";
 import { ProfileCard } from "@/components/feed/profile/public/profile-card";
 import { ProfileStats } from "@/components/feed/profile/profile-stats";
+import { ContributionChart } from "@/components/feed/contribution-chart";
 
 interface UserProfilePageProps {
   params: Promise<{
@@ -24,6 +26,17 @@ export default async function UserProfilePage({
     notFound();
   }
 
+  // Fetch GitHub contributions if user has GitHub username
+  let githubContributions = null;
+  if (profileResponse.data.githubUsername) {
+    const githubResponse = await fetchGitHubContributions(
+      profileResponse.data.githubUsername
+    );
+    if (githubResponse.success && githubResponse.data) {
+      githubContributions = githubResponse.data.contributions;
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto">
@@ -32,6 +45,14 @@ export default async function UserProfilePage({
           <div className="lg:col-span-1">
             <ProfileCard profile={profileResponse.data} isPublic={true} />
           </div>
+
+          {/* GitHub Contribution Chart */}
+          {profileResponse.data.githubUsername && githubContributions && (
+            <ContributionChart
+              contributions={githubContributions}
+              className="w-full"
+            />
+          )}
         </div>
       </div>
     </div>

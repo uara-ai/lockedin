@@ -830,6 +830,7 @@ export async function getAllPublicUsers(
         isPublic: true,
         username: {
           not: null,
+          notIn: ["dev"], // Exclude dev user
         },
       },
       select: {

@@ -48,7 +48,7 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Follow me",
+      title: "Stay updated",
       url: "https://x.com/locked_fed",
       icon: IconBrandX,
     },
