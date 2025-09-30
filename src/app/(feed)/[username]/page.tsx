@@ -32,12 +32,17 @@ export default async function UserProfilePage({
 
   // Fetch GitHub contributions if user has GitHub username
   let githubContributions = null;
+  let githubError = null;
+  let githubLoading = false;
+
   if (profileResponse.data.githubUsername) {
     const githubResponse = await fetchGitHubContributions(
       profileResponse.data.githubUsername
     );
     if (githubResponse.success && githubResponse.data) {
       githubContributions = githubResponse.data.contributions;
+    } else {
+      githubError = githubResponse.error || "UNKNOWN_ERROR";
     }
   }
 
@@ -94,9 +99,11 @@ export default async function UserProfilePage({
         stats={
           <div className="space-y-4">
             {/* GitHub Contribution Chart */}
-            {profileResponse.data.githubUsername && githubContributions ? (
+            {profileResponse.data.githubUsername ? (
               <ContributionChart
-                contributions={githubContributions}
+                contributions={githubContributions || []}
+                loading={githubLoading}
+                error={githubError}
                 className="w-full"
               />
             ) : (

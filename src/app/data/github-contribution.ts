@@ -11,6 +11,12 @@ export interface GitHubContributionData {
   totalContributions: number;
 }
 
+export interface GitHubContributionState {
+  data: GitHubContributionData | null;
+  loading: boolean;
+  error: string | null;
+}
+
 interface CachedContributionData {
   data: GitHubContributionData;
   timestamp: number;
@@ -80,14 +86,12 @@ export async function fetchGitHubContributions(
 
     const githubToken = process.env.GITHUB_TOKEN;
 
-    // If no token, return mock data (but still cache it)
+    // If no token, return error
     if (!githubToken) {
-      console.log("🔄 No GitHub token, using mock data for:", username);
-      const mockData = generateMockData();
-      setCachedData(username, mockData);
+      console.log("❌ No GitHub token configured");
       return {
-        success: true,
-        data: mockData,
+        success: false,
+        error: "GITHUB_TOKEN_MISSING",
       };
     }
 
@@ -126,24 +130,24 @@ export async function fetchGitHubContributions(
     });
 
     if (!response.ok) {
-      console.warn("⚠️ GitHub API error, using mock data");
-      const mockData = generateMockData();
-      setCachedData(username, mockData);
+      console.error(
+        "❌ GitHub API error:",
+        response.status,
+        response.statusText
+      );
       return {
-        success: true,
-        data: mockData,
+        success: false,
+        error: "GITHUB_API_ERROR",
       };
     }
 
     const data = await response.json();
 
     if (data.errors || !data.data?.user) {
-      console.warn("⚠️ GitHub user not found, using mock data");
-      const mockData = generateMockData();
-      setCachedData(username, mockData);
+      console.error("❌ GitHub user not found or API errors:", data.errors);
       return {
-        success: true,
-        data: mockData,
+        success: false,
+        error: "GITHUB_USER_NOT_FOUND",
       };
     }
 
@@ -182,59 +186,29 @@ export async function fetchGitHubContributions(
     };
   } catch (error) {
     console.error("❌ GitHub fetch error:", error);
-    const mockData = generateMockData();
-    setCachedData(username, mockData);
     return {
-      success: true,
-      data: mockData,
+      success: false,
+      error: "GITHUB_FETCH_ERROR",
     };
   }
 }
 
 /**
- * Generate mock contribution data for testing/fallback
+ * Get user-friendly error message based on error type
  */
-function generateMockData(): GitHubContributionData {
-  const contributions: GitHubContribution[] = [];
-  const today = new Date();
-
-  // Generate last 365 days
-  for (let i = 364; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-
-    // Create realistic contribution pattern
-    const random = Math.random();
-    let count = 0;
-    let level = 0;
-
-    // 30% chance of having contributions
-    if (random > 0.7) {
-      count = Math.floor(Math.random() * 15) + 1;
-      if (count >= 10) level = 4;
-      else if (count >= 7) level = 3;
-      else if (count >= 3) level = 2;
-      else level = 1;
-    }
-
-    contributions.push({
-      date: date.toISOString().split("T")[0],
-      count,
-      level,
-    });
+export function getGitHubErrorMessage(error: string): string {
+  switch (error) {
+    case "GITHUB_TOKEN_MISSING":
+      return "GitHub integration is not configured. Please contact support.";
+    case "GITHUB_API_ERROR":
+      return "Unable to fetch GitHub data. GitHub API is currently unavailable.";
+    case "GITHUB_USER_NOT_FOUND":
+      return "GitHub username not found. Please check your GitHub username in settings.";
+    case "GITHUB_FETCH_ERROR":
+      return "Failed to fetch GitHub data. Please try again later.";
+    default:
+      return "Unable to load GitHub data at this time.";
   }
-
-  const totalContributions = contributions.reduce((sum, c) => sum + c.count, 0);
-
-  console.log("📊 Generated mock data:", {
-    totalContributions,
-    daysWithActivity: contributions.filter((c) => c.level > 0).length,
-  });
-
-  return {
-    contributions,
-    totalContributions,
-  };
 }
 
 // Cursor rules applied correctly.

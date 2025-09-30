@@ -2,11 +2,20 @@
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { GitHubContribution } from "@/app/data/github-contribution";
-import { IconBrandGithub } from "@tabler/icons-react";
+import {
+  GitHubContribution,
+  getGitHubErrorMessage,
+} from "@/app/data/github-contribution";
+import {
+  IconBrandGithub,
+  IconAlertCircle,
+  IconLoader2,
+} from "@tabler/icons-react";
 
 interface ContributionChartProps {
-  contributions: GitHubContribution[];
+  contributions?: GitHubContribution[];
+  loading?: boolean;
+  error?: string | null;
   className?: string;
 }
 
@@ -27,12 +36,69 @@ interface MonthData {
 }
 
 export function ContributionChart({
-  contributions,
+  contributions = [],
+  loading = false,
+  error = null,
   className,
 }: ContributionChartProps) {
   const [viewMode, setViewMode] = useState<"quarterly" | "monthly">(
     "quarterly"
   );
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className={cn("w-full space-y-4", className)}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-medium text-foreground flex items-center gap-1">
+              <IconBrandGithub className="w-4 h-4" />
+              GitHub Activity
+            </h3>
+            <p className="text-xs text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+        <div className="bg-transparent border rounded-lg p-8 flex items-center justify-center">
+          <div className="text-center space-y-2">
+            <IconLoader2 className="w-8 h-8 mx-auto animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              Fetching GitHub data...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className={cn("w-full space-y-4", className)}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-medium text-foreground flex items-center gap-1">
+              <IconBrandGithub className="w-4 h-4" />
+              GitHub Activity
+            </h3>
+            <p className="text-xs text-muted-foreground">Error loading data</p>
+          </div>
+        </div>
+        <div className="bg-transparent border rounded-lg p-8">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
+              <IconAlertCircle className="w-8 h-8 text-red-500" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground">
+              Unable to Load GitHub Data
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {getGitHubErrorMessage(error)}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Process contributions into quarterly data
   const processQuarterlyData = (): QuarterData[] => {
