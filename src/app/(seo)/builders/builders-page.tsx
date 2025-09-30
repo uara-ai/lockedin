@@ -1,33 +1,22 @@
 import { Suspense } from "react";
 import { getBuildersData } from "@/app/data/profile";
-import { Users, Search, Filter } from "lucide-react";
+import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
   IconBrandGithub,
   IconBrandX,
-  IconGlobe,
+  IconCornerRightUp,
   IconWorld,
 } from "@tabler/icons-react";
+import { UsernameMenu } from "@/components/feed";
 
 // This page fetches all builders with daily revalidation
 export const revalidate = 3600; // 1 hour
 
-interface BuildersPageProps {
-  searchParams?: {
-    page?: string;
-    search?: string;
-    filter?: string;
-  };
-}
-
-export default async function BuildersPageContent({
-  searchParams,
-}: BuildersPageProps) {
-  const page = Number(searchParams?.page) || 1;
+export default async function BuildersPageContent() {
   const limit = 50; // Show more builders on the dedicated page
 
   // Fetch builders data with efficient caching
@@ -42,59 +31,41 @@ export default async function BuildersPageContent({
   return (
     <div className="min-h-screen bg-background max-w-6xl mx-auto">
       {/* Header */}
-      <div>
+      <div className="border-b">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-                All Builders
-              </h1>
-              <p className="text-muted-foreground">
-                Meet the builders, makers, and founders shipping on LockedIn
-              </p>
-            </div>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-1">
+                <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                  All Builders
+                </h1>
+                <p className="text-muted-foreground">
+                  Meet the builders, makers, and founders shipping on LockedIn
+                </p>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                {builders?.length} active builders
-              </span>
-              <Button asChild>
-                <Link href="/apply">
-                  <Users className="h-4 w-4 mr-2" />
-                  Join Community
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="border rounded-lg bg-muted/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search builders..."
-                  className="pl-9"
-                  defaultValue={await searchParams?.search}
-                />
+              <div className="flex items-center gap-2 sm:mr-20">
+                <span className="text-sm text-muted-foreground">
+                  <span className="text-orange-500 text-lg font-bold">
+                    {builders?.length}
+                  </span>{" "}
+                  builders joined
+                </span>
+                <div className="flex flex-col items-center gap-2">
+                  <IconCornerRightUp className="size-8 text-orange-500 hidden md:block" />
+                  <Link
+                    href="/login"
+                    className="text-orange-500 font-semibold sm:hidden"
+                  >
+                    Join now
+                  </Link>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
-              </Button>
-              <select className="text-sm border rounded-md px-3 py-1.5 bg-background">
-                <option value="activity">Recent Activity</option>
-                <option value="streak">Highest Streak</option>
-                <option value="joined">Recently Joined</option>
-                <option value="verified">Verified First</option>
-              </select>
+            {/* Search Component */}
+            <div className="flex justify-center max-w-md mx-auto w-full">
+              <UsernameMenu />
             </div>
           </div>
         </div>

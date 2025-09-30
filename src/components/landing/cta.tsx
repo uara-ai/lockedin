@@ -57,7 +57,6 @@ export default function SmallCTA() {
           </Link>
         </Button>
       </div>
-      <GithubStars className="size-6" />
     </AnimatedGroup>
   );
 }

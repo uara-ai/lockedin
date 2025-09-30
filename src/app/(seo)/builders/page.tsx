@@ -14,16 +14,8 @@ export const metadata = {
   },
 };
 
-interface BuildersPageProps {
-  searchParams?: {
-    page?: string;
-    search?: string;
-    filter?: string;
-  };
-}
-
-export default function BuildersPage({ searchParams }: BuildersPageProps) {
-  return <BuildersPageContent searchParams={searchParams} />;
+export default function BuildersPage() {
+  return <BuildersPageContent />;
 }
 
 // Cursor rules applied correctly.
