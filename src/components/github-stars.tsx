@@ -43,7 +43,7 @@ export function GithubStars({ className, showStars = true }: GithubStarsProps) {
         {showStars && stars !== null && (
           <>
             <span className="text-sm font-medium flex items-center gap-1 text-muted-foreground">
-              <IconBrandGithub className="size-4" />
+              <IconBrandGithub className={cn("size-4", className)} />
               {stars}
             </span>
           </>

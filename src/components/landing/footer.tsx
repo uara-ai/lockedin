@@ -1,6 +1,7 @@
 import { Logo } from "@/components/logo";
 import { IconBrandX } from "@tabler/icons-react";
 import Link from "next/link";
+import { GithubStars } from "../github-stars";
 
 const links = [
   {
@@ -54,6 +55,7 @@ export default function FooterSection() {
           >
             <IconBrandX className="size-6" />
           </Link>
+          <GithubStars className="size-6" />
         </div>
         <span className="text-muted-foreground block text-center text-sm">
           {" "}
