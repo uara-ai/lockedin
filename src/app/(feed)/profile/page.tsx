@@ -3,10 +3,12 @@ import { redirect } from "next/navigation";
 import { getUserProfile, getProfileStats } from "@/app/data/profile";
 import { fetchGitHubContributions } from "@/app/data/github-contribution";
 import { getPostsByUser } from "@/app/data/posts";
+import { getMyStartups } from "@/app/data/startups";
 import { ProfileCard } from "@/components/feed/profile/profile-card";
-import { ContributionChart } from "@/components/feed/contribution-chart";
+import { ContributionSection } from "@/components/feed/activity/contribution-section";
 import { ProfileTabs } from "@/components/feed/profile/profile-tabs";
 import { PostCard } from "@/components/feed/post-card";
+import { StartupsList } from "@/components/feed/startup/startups-list";
 
 export default async function ProfilePage() {
   // If the user isn't signed in, they will be automatically redirected to AuthKit
@@ -16,12 +18,14 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  // Fetch user profile, stats, and posts
-  const [profileResponse, statsResponse, postsResponse] = await Promise.all([
-    getUserProfile(),
-    getProfileStats(),
-    getPostsByUser(user.id, 20, 0),
-  ]);
+  // Fetch user profile, stats, posts, and startups
+  const [profileResponse, statsResponse, postsResponse, startupsResponse] =
+    await Promise.all([
+      getUserProfile(),
+      getProfileStats(),
+      getPostsByUser(user.id, 20, 0),
+      getMyStartups(),
+    ]);
 
   if (!profileResponse.success || !profileResponse.data) {
     // If profile doesn't exist, redirect to profile creation
@@ -91,27 +95,21 @@ export default async function ProfilePage() {
           </div>
         }
         stats={
-          <div className="space-y-4">
-            {/* GitHub Contribution Chart */}
-            {profileResponse.data.githubUsername ? (
-              <ContributionChart
-                contributions={githubContributions || []}
-                loading={githubLoading}
-                error={githubError}
-                className="w-full"
-              />
-            ) : (
-              <div className="bg-card border rounded-lg p-6 text-center">
-                <h3 className="text-lg font-semibold mb-2">No GitHub Data</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Connect your GitHub account to see contribution statistics
-                </p>
-                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm">
-                  Connect GitHub
-                </button>
-              </div>
-            )}
-          </div>
+          <ContributionSection
+            contributions={githubContributions}
+            loading={githubLoading}
+            error={githubError}
+            isPublic={false}
+            showConnectPrompt={true}
+          />
+        }
+        startups={
+          <StartupsList
+            initialStartups={
+              startupsResponse.success ? startupsResponse.data || [] : []
+            }
+            isOwner={true}
+          />
         }
       />
     </div>

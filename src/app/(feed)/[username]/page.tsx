@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import { getPublicProfile, getProfileStats } from "@/app/data/profile";
 import { fetchGitHubContributions } from "@/app/data/github-contribution";
 import { getPostsByUsername } from "@/app/data/posts";
+import { getStartupsByUser } from "@/app/data/startups";
 import { ProfileCard } from "@/components/feed/profile/public/profile-card";
-import { ProfileStats } from "@/components/feed/profile/profile-stats";
-import { ContributionChart } from "@/components/feed/contribution-chart";
+import { ContributionSection } from "@/components/feed/activity/contribution-section";
 import { ProfileTabs } from "@/components/feed/profile/profile-tabs";
 import { PostCard } from "@/components/feed/post-card";
+import { StartupsList } from "@/components/feed/startup/startups-list";
 
 interface UserProfilePageProps {
   params: Promise<{
@@ -19,16 +20,19 @@ export default async function UserProfilePage({
 }: UserProfilePageProps) {
   const { username } = await params;
 
-  // Fetch public profile data, stats, and posts by username
-  const [profileResponse, statsResponse, postsResponse] = await Promise.all([
-    getPublicProfile(username),
-    getProfileStats(undefined, username),
-    getPostsByUsername(username, 20, 0),
-  ]);
+  // Fetch public profile data first
+  const profileResponse = await getPublicProfile(username);
 
   if (!profileResponse.success || !profileResponse.data) {
     notFound();
   }
+
+  // Then fetch other data in parallel using the user ID
+  const [statsResponse, postsResponse, startupsResponse] = await Promise.all([
+    getProfileStats(undefined, username),
+    getPostsByUsername(username, 20, 0),
+    getStartupsByUser(profileResponse.data.id),
+  ]);
 
   // Fetch GitHub contributions if user has GitHub username
   let githubContributions = null;
@@ -97,24 +101,21 @@ export default async function UserProfilePage({
           </div>
         }
         stats={
-          <div className="space-y-4">
-            {/* GitHub Contribution Chart */}
-            {profileResponse.data.githubUsername ? (
-              <ContributionChart
-                contributions={githubContributions || []}
-                loading={githubLoading}
-                error={githubError}
-                className="w-full"
-              />
-            ) : (
-              <div className="bg-card border rounded-lg p-6 text-center">
-                <h3 className="text-lg font-semibold mb-2">No GitHub Data</h3>
-                <p className="text-sm text-muted-foreground">
-                  This user hasn&apos;t connected their GitHub account
-                </p>
-              </div>
-            )}
-          </div>
+          <ContributionSection
+            contributions={githubContributions}
+            loading={githubLoading}
+            error={githubError}
+            isPublic={true}
+            showConnectPrompt={false}
+          />
+        }
+        startups={
+          <StartupsList
+            initialStartups={
+              startupsResponse.success ? startupsResponse.data || [] : []
+            }
+            isOwner={false}
+          />
         }
       />
     </div>

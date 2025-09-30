@@ -26,6 +26,7 @@ import {
   IconBrandX,
   IconFlame,
   IconUser,
+  IconPalette,
 } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -47,6 +48,11 @@ const data = {
       title: "Profile",
       url: "/profile",
       icon: IconUser,
+    },
+    {
+      title: "Examples",
+      url: "/examples",
+      icon: IconPalette,
     },
   ],
   navSecondary: [
