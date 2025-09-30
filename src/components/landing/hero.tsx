@@ -1,15 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Flame } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { HeroHeader } from "@/components/landing/header";
 import { Variants } from "motion/react";
-import { SubscribeInput } from "../subscribe-input";
 import { Badge } from "../ui/badge";
-import { IconBrandX } from "@tabler/icons-react";
+import { GithubStars } from "../github-stars";
 
 const transitionVariants = {
   item: {
@@ -130,6 +128,7 @@ export default function HeroSection() {
                       </Link>
                     </Button>
                   </div>
+                  <GithubStars className="size-6" />
                 </AnimatedGroup>
               </div>
             </div>
