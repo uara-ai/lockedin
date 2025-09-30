@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.google.com",
       },
+      {
+        protocol: "https",
+        hostname: "pbs.twimg.com",
+      },
       // Favicon services
       {
         protocol: "https",

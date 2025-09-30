@@ -5,6 +5,7 @@ import Pricing from "@/components/landing/pricing";
 import { Builders } from "@/components/landing/builders";
 import FooterSection from "@/components/landing/footer";
 import { Skeleton } from "@/components/ui/skeleton";
+import WallOfLoveSection from "@/components/landing/testimonials";
 
 // Loading component for builders section
 function BuildersLoading() {
@@ -61,6 +62,7 @@ export default function Home() {
         <Builders />
       </Suspense>
       <FeaturesSection />
+      <WallOfLoveSection />
       <Pricing />
       <FooterSection />
     </>
