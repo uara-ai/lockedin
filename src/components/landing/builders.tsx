@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { IconRosetteDiscountCheck } from "@tabler/icons-react";
 import Image from "next/image";
-import { Members } from "../feed/members";
+import AppAge from "./age";
 import { getBuildersData } from "@/app/data/profile";
 import { unstable_cache } from "next/cache";
 
@@ -37,11 +37,11 @@ export async function Builders() {
   return (
     <div className="relative py-16 md:py-24" id="builders">
       <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center mb-12 max-w-sm mx-auto">
-          <h2 className="text-3xl font-bold md:text-4xl mb-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold md:text-4xl mb-6">
             Follow who&apos;s shipping
           </h2>
-          <Members />
+          <AppAge />
         </div>
 
         {/* Builders Grid */}
