@@ -940,6 +940,120 @@ export async function revalidateBuildersCache(): Promise<void> {
   revalidateTag("builders");
 }
 
+// Search users by username or name
+export async function searchUsers(
+  query: string,
+  limit: number = 20,
+  offset: number = 0
+): Promise<ActionResponse<UserProfile[]>> {
+  try {
+    if (!query.trim()) {
+      return {
+        success: true,
+        data: [],
+      };
+    }
+
+    const searchTerm = query.trim().toLowerCase();
+
+    const dbUsers = await prisma.user.findMany({
+      where: {
+        isPublic: true,
+        username: {
+          not: null,
+        },
+        OR: [
+          {
+            username: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+          {
+            name: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        email: false, // Don't expose email in public search
+        username: true,
+        name: true,
+        bio: true,
+        avatar: true,
+        website: true,
+        location: true,
+        joinedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        isPublic: true,
+        verified: true,
+        currentStreak: true,
+        longestStreak: true,
+        lastActivityDate: true,
+        githubUsername: true,
+        githubSyncEnabled: true,
+        xUsername: true,
+        xSyncEnabled: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
+      },
+      orderBy: [
+        { verified: "desc" }, // Verified users first
+        { currentStreak: "desc" }, // Then by streak
+        { createdAt: "desc" }, // Then by join date
+      ],
+      take: limit,
+      skip: offset,
+    });
+
+    const profiles: UserProfile[] = dbUsers.map((user) => ({
+      id: user.id,
+      email: "", // Don't expose email in search results
+      username: user.username,
+      name: user.name,
+      bio: user.bio,
+      avatar: user.avatar,
+      website: user.website,
+      location: user.location,
+      joinedAt: user.joinedAt,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      isPublic: user.isPublic,
+      verified: user.verified,
+      currentStreak: user.currentStreak,
+      longestStreak: user.longestStreak,
+      lastActivityDate: user.lastActivityDate,
+      githubUsername: user.githubUsername,
+      githubSyncEnabled: user.githubSyncEnabled,
+      xUsername: user.xUsername,
+      xSyncEnabled: user.xSyncEnabled,
+      followers_count: user._count.followers,
+      following_count: user._count.following,
+      posts_count: user._count.posts,
+    }));
+
+    return {
+      success: true,
+      data: profiles,
+    };
+  } catch (error) {
+    console.error("Error searching users:", error);
+    return {
+      success: false,
+      error: appErrors.DATABASE_ERROR,
+    };
+  }
+}
+
 // Get builders for showcase (fed always first, exclude dev)
 export async function getBuildersData(
   limit: number = 20
