@@ -25,7 +25,7 @@ const socialLinks = [
     id: "discord",
     name: "Discord",
     icon: IconBrandDiscord,
-    url: "https://discord.gg/",
+    url: "https://discord.gg/JBwt49cyQT",
   },
 ];
 
