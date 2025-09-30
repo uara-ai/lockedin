@@ -17,6 +17,10 @@ const links = [
     href: "#pricing",
   },
   {
+    title: "Examples",
+    href: "/examples",
+  },
+  {
     title: "Stay updated",
     href: "https://x.com/locked_fed",
   },

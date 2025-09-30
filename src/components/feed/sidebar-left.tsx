@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Blocks,
-  Calendar,
-  MessageCircleQuestion,
-  Plus,
-  Settings2,
-  Trash2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { NavMain } from "@/components/feed/nav-main";
 import { NavSecondary } from "@/components/feed/nav-secondary";
@@ -48,11 +41,6 @@ const data = {
       title: "Profile",
       url: "/profile",
       icon: IconUser,
-    },
-    {
-      title: "Examples",
-      url: "/examples",
-      icon: IconPalette,
     },
   ],
   navSecondary: [

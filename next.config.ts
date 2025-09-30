@@ -19,6 +19,48 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "ik.imagekit.io",
       },
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+      },
+      // Favicon services
+      {
+        protocol: "https",
+        hostname: "icon.horse",
+      },
+      {
+        protocol: "https",
+        hostname: "favicons.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.faviconkit.com",
+      },
+      {
+        protocol: "https",
+        hostname: "external-content.duckduckgo.com",
+      },
+      // Allow any domain for favicons (with path prefix)
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/favicon.*",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/apple-touch-icon.*",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/android-chrome-*",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+        pathname: "/favicon.*",
+      },
     ],
   },
 };
