@@ -33,7 +33,7 @@ export default async function UserProfilePage({
   // Fetch GitHub contributions if user has GitHub username
   let githubContributions = null;
   let githubError = null;
-  let githubLoading = false;
+  const githubLoading = false;
 
   if (profileResponse.data.githubUsername) {
     const githubResponse = await fetchGitHubContributions(
