@@ -144,6 +144,40 @@
   outline-offset: -1px;
 }
 
+/* Mobile-responsive stat cards */
+@media (max-width: 640px) {
+  .contribution-stats-card {
+    padding: 0.5rem !important;
+    min-height: 70px !important;
+  }
+
+  .contribution-stats-number {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  .contribution-stats-label {
+    font-size: 0.625rem !important;
+    margin-top: 0.25rem !important;
+  }
+}
+
+/* Profile card mobile optimizations */
+@media (max-width: 640px) {
+  .profile-details-row {
+    gap: 0.75rem !important;
+  }
+
+  .profile-detail-item {
+    min-width: 0;
+    max-width: 140px;
+  }
+
+  .profile-social-links {
+    gap: 0.5rem !important;
+  }
+}
+
 /* Variant-specific enhancements */
 .variant-github .contribution-graph {
   background: linear-gradient(

@@ -218,58 +218,105 @@ export function ContributionChart({
 
   return (
     <div className={cn("w-full space-y-4", className)}>
-      {/* Header with Stats */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <h3 className="text-base font-medium text-foreground flex items-center gap-2">
-            <Icon className="w-4 h-4" />
+      {/* Header with Stats - Mobile First Design */}
+      <div className="space-y-4">
+        {/* Title */}
+        <div className="flex items-center gap-2">
+          <Icon className="w-5 h-5 shrink-0" />
+          <h3 className="text-lg font-semibold text-foreground">
             {title || config.title}
           </h3>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className={cn("font-semibold", config.accentColor)}>
-              {stats.total.toLocaleString()}
-            </span>
-            <span>contributions in {year}</span>
-            {stats.activeDays > 0 && (
-              <>
-                <span>•</span>
-                <span>{stats.activeDays} active days</span>
-              </>
-            )}
-          </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="flex items-center gap-3 text-xs">
-          {variant === "streak" && stats.currentStreak > 0 && (
-            <div className="text-center">
-              <div className={cn("font-bold text-sm", config.accentColor)}>
-                {stats.currentStreak}
+        {/* Main Stats - Mobile First Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
+          {/* Total Contributions */}
+          <div className="border rounded-lg p-3 text-center min-h-[80px] flex flex-col justify-center contribution-stats-card">
+            <div
+              className={cn(
+                "text-base sm:text-lg lg:text-xl font-bold contribution-stats-number",
+                config.accentColor
+              )}
+            >
+              {stats.total.toLocaleString()}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1 contribution-stats-label">
+              contributions
+            </div>
+            <div className="text-[10px] text-muted-foreground/70 mt-0.5">
+              in {year}
+            </div>
+          </div>
+
+          {/* Active Days */}
+          {stats.activeDays > 0 && (
+            <div className="border rounded-lg p-3 text-center min-h-[80px] flex flex-col justify-center contribution-stats-card">
+              <div
+                className={cn(
+                  "text-base sm:text-lg lg:text-xl font-bold contribution-stats-number",
+                  config.accentColor
+                )}
+              >
+                {stats.activeDays}
               </div>
-              <div className="text-muted-foreground">current</div>
+              <div className="text-xs text-muted-foreground mt-1 contribution-stats-label">
+                active days
+              </div>
             </div>
           )}
+
+          {/* Max Streak */}
           {stats.maxStreak > 0 && (
-            <div className="text-center">
-              <div className={cn("font-bold text-sm", config.accentColor)}>
+            <div className="border rounded-lg p-3 text-center min-h-[80px] flex flex-col justify-center contribution-stats-card">
+              <div
+                className={cn(
+                  "text-base sm:text-lg lg:text-xl font-bold contribution-stats-number",
+                  config.accentColor
+                )}
+              >
                 {stats.maxStreak}
               </div>
-              <div className="text-muted-foreground">max streak</div>
+              <div className="text-xs text-muted-foreground mt-1 contribution-stats-label">
+                max streak
+              </div>
             </div>
           )}
-          {stats.averagePerDay > 0 && (
-            <div className="text-center">
-              <div className={cn("font-bold text-sm", config.accentColor)}>
+
+          {/* Current Streak or Average */}
+          {variant === "streak" && stats.currentStreak > 0 ? (
+            <div className="rounded-lg p-3 text-center min-h-[80px] flex flex-col justify-center border-2 border-orange-200 dark:border-orange-800">
+              <div
+                className={cn(
+                  "text-base sm:text-lg lg:text-xl font-bold contribution-stats-number",
+                  config.accentColor
+                )}
+              >
+                {stats.currentStreak}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1 contribution-stats-label">
+                current streak
+              </div>
+            </div>
+          ) : stats.averagePerDay > 0 ? (
+            <div className="border rounded-lg p-3 text-center min-h-[80px] flex flex-col justify-center contribution-stats-card">
+              <div
+                className={cn(
+                  "text-base sm:text-lg lg:text-xl font-bold contribution-stats-number",
+                  config.accentColor
+                )}
+              >
                 {stats.averagePerDay}
               </div>
-              <div className="text-muted-foreground">avg/day</div>
+              <div className="text-xs text-muted-foreground mt-1 contribution-stats-label">
+                avg/day
+              </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
       {/* Contribution Graph */}
-      <div className="bg-card border rounded-lg p-6">
+      <div className="border rounded-lg p-6">
         <ContributionGraph
           data={contributionData}
           year={year}
@@ -328,7 +375,7 @@ function calculateCurrentStreak(contributions: GitHubContribution[]): number {
   if (sortedContribs.length === 0) return 0;
 
   let streak = 0;
-  let currentDate = new Date(today);
+  const currentDate = new Date(today);
 
   for (const contrib of sortedContribs) {
     const contribDate = new Date(contrib.date);

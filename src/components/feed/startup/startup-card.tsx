@@ -26,6 +26,7 @@ import { type StartupWithDetails, deleteStartup } from "@/app/data/startups";
 import { StartupForm } from "./startup-form";
 import { getFaviconWithFallback } from "@/lib/favicon";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface StartupCardProps {
   startup: StartupWithDetails;
@@ -83,7 +84,7 @@ export function StartupCard({
           {/* Logo/Favicon */}
           {startup.website && (
             <div className="w-12 h-12 rounded-lg border bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
-              <img
+              <Image
                 src={getFaviconWithFallback(startup.website, 32).primary}
                 alt={`${startup.name} favicon`}
                 className="w-6 h-6 object-contain"
@@ -94,6 +95,8 @@ export function StartupCard({
                     32
                   ).fallback;
                 }}
+                width={32}
+                height={32}
               />
             </div>
           )}

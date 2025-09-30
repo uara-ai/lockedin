@@ -238,66 +238,99 @@ export function ProfileCard({
           </p>
         )}
 
-        {/* Profile Details */}
-        <div className="space-y-2 mb-4 text-sm text-muted-foreground flex items-center gap-2">
-          {profile.location && (
-            <div className="flex items-center gap-2">
-              <MapPin className="size-4" />
-              <span>{profile.location}</span>
-            </div>
-          )}
-          {profile.website && (
-            <div className="flex items-center gap-2">
-              <LinkIcon className="size-4" />
-              <a
-                href={profile.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                {profile.website.replace(/^https?:\/\//, "")}
-              </a>
-            </div>
-          )}
-          {profile.currentStreak > 0 && (
-            <div className="flex items-center gap-2">
-              <Flame className="size-4 text-orange-500 fill-orange-500" />
-              <span>{profile.currentStreak} days</span>
-            </div>
-          )}
-          {/* Social Links */}
-          {(profile.githubUsername || profile.xUsername) && (
-            <div className="flex gap-3">
-              {profile.githubUsername && (
+        {/* Profile Details - Mobile First Design */}
+        <div className="mb-4 space-y-3">
+          {/* First Row: Location, Website, Streak */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            {profile.location && (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="size-4 shrink-0" />
+                <span className="truncate max-w-[150px] sm:max-w-none">
+                  {profile.location}
+                </span>
+              </div>
+            )}
+            {profile.website && (
+              <div className="flex items-center gap-1.5">
+                <LinkIcon className="size-4 shrink-0" />
                 <a
-                  href={`https://github.com/${profile.githubUsername}`}
+                  href={profile.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-blue-500 hover:underline truncate max-w-[120px] sm:max-w-none"
                 >
-                  <IconBrandGithubFilled className="size-4" />
+                  {profile.website.replace(/^https?:\/\//, "")}
                 </a>
+              </div>
+            )}
+            {profile.currentStreak > 0 && (
+              <div className="flex items-center gap-1.5">
+                <Flame className="size-4 text-orange-500 fill-orange-500 shrink-0" />
+                <span className="whitespace-nowrap">
+                  {profile.currentStreak} day streak
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Second Row: Social Links and Join Date */}
+          <div className="flex items-center justify-between">
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
+              {profile.githubUsername && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={`https://github.com/${profile.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <IconBrandGithubFilled className="size-4" />
+                      <span className="text-xs hidden sm:inline">
+                        @{profile.githubUsername}
+                      </span>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>GitHub: @{profile.githubUsername}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {profile.xUsername && (
-                <a
-                  href={`https://x.com/${profile.xUsername}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <IconBrandX className="size-4" />
-                </a>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={`https://x.com/${profile.xUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <IconBrandX className="size-4" />
+                      <span className="text-xs hidden sm:inline">
+                        @{profile.xUsername}
+                      </span>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>X (Twitter): @{profile.xUsername}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
-          )}
-          <div className="flex items-center gap-2 ml-auto">
-            <Calendar className="size-4" />
-            <span>Joined {formatJoinDate(profile.joinedAt)}</span>
+
+            {/* Join Date */}
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Calendar className="size-4 shrink-0" />
+              <span className="whitespace-nowrap">
+                Joined {formatJoinDate(profile.joinedAt)}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex gap-4 text-sm">
+        {/* Stats - Mobile Responsive */}
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <div className="flex items-center gap-1">
             <span className="font-semibold text-foreground">
               {formatNumber(profile.following_count)}

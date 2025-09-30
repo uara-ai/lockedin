@@ -53,7 +53,7 @@ export function ContributionSection({
         className="w-full"
       />
 
-      {/* Commits Variation */}
+      {/* Add revenues ?
       <ContributionChart
         contributions={contributions || []}
         loading={loading}
@@ -61,25 +61,25 @@ export function ContributionSection({
         variant="commits"
         title="Daily Commits"
         className="w-full"
-      />
+      />*/}
 
-      {/* Activity Variation */}
+      {/* Add health data ?\ 
       <ContributionChart
         contributions={contributions || []}
         loading={loading}
         error={error}
         variant="activity"
         className="w-full"
-      />
+      />*/}
 
-      {/* Streak Variation */}
+      {/* Add streak on socials ?
       <ContributionChart
         contributions={contributions || []}
         loading={loading}
         error={error}
         variant="streak"
         className="w-full"
-      />
+      />*/}
     </div>
   );
 }

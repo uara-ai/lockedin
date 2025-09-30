@@ -21,7 +21,5 @@ export { SidebarRight } from "./sidebar-right";
 export { SignOut } from "./sign-out";
 export { SocialsHeader } from "./socials-header";
 export { Sponsors } from "./sponsors";
-export { ContributionChart } from "./contribution-chart";
-export { ContributionSection } from "./contribution-section";
 
 // Cursor rules applied correctly.
