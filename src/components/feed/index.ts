@@ -6,6 +6,7 @@ export { PostCommentsInline } from "./post-comments-inline";
 export { FeedContainer } from "./feed-container";
 export { Contributors } from "./contributors";
 export { Featured } from "./featured";
+export { BuildersShowcase } from "./builders-showcase";
 export { FeedHeader } from "./header";
 export { Members } from "./members";
 export { ModeToggle } from "./mode-toggle";

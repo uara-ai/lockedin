@@ -153,7 +153,7 @@ export async function Builders() {
         <div className="text-center">
           <div className="inline-flex flex-col sm:flex-row gap-4">
             <Button variant="outline" asChild size="lg">
-              <Link href="/feed">
+              <Link href="/builders">
                 <Flame className="h-4 w-4 mr-2 text-orange-500 fill-current" />
                 View all builders
               </Link>
