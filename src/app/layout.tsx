@@ -23,6 +23,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Lockedin",
   description: "Open-Source LinkedIn alternative for people who ship",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
+  ),
 };
 
 export default function RootLayout({

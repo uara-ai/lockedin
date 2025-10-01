@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,7 @@ import {
   IconHeart,
 } from "@tabler/icons-react";
 
-export default function SponsorSuccessPage() {
+function SponsorSuccessContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [sponsorData, setSponsorData] = useState<any>(null);
@@ -193,5 +193,22 @@ export default function SponsorSuccessPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SponsorSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full flex flex-col gap-6 p-4">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <SponsorSuccessContent />
+    </Suspense>
   );
 }
