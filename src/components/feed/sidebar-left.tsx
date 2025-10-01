@@ -22,6 +22,7 @@ import {
   IconPalette,
   IconRocket,
   IconSettings,
+  IconStar,
 } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -40,8 +41,8 @@ const data = {
       icon: IconRocket,
     },
     {
-      title: "Featured",
-      url: "/featured",
+      title: "Founders",
+      url: "/founders",
       icon: IconFlame,
     },
     {

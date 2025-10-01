@@ -41,6 +41,8 @@ import {
 import { createPost, type CreatePostInput } from "@/app/data/posts";
 import { PostType } from "@prisma/client";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import Link from "next/link";
+import { IconLock } from "@tabler/icons-react";
 
 // Validation schema matching the server-side schema
 const createPostSchema = z.object({
@@ -197,6 +199,19 @@ export function CreatePost({ onPostCreated, className }: CreatePostProps) {
         <p className="text-muted-foreground">
           Please sign in to create posts and share your journey.
         </p>
+        <Button
+          variant="default"
+          size="sm"
+          className="text-sm font-semibold"
+          asChild
+        >
+          <Link href="/login">
+            <span className="flex items-center gap-2">
+              <IconLock className="size-4" />
+              Sign in
+            </span>
+          </Link>
+        </Button>
       </Card>
     );
   }

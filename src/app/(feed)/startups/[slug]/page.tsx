@@ -17,6 +17,7 @@ import {
   IconBuilding,
   IconBrandX,
   IconLeaf,
+  IconArrowLeft,
 } from "@tabler/icons-react";
 import { FaviconImage } from "@/components/ui/favicon-image";
 import Link from "next/link";
@@ -62,15 +63,21 @@ export default async function StartupPage({ params }: StartupPageProps) {
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 px-8">
       {/* Header Section */}
-      <div className="mb-4">
+      <Button variant="ghost" size="sm" className="justify-end w-full" asChild>
+        <Link href="/startups" className="flex items-center gap-2 text-sm">
+          <IconArrowLeft className="h-4 w-4" />
+          Go back
+        </Link>
+      </Button>
+      <div className="mb-4 space-y-2">
         <div className="font-mono text-xs mb-1 text-orange-500">Startup</div>
         <div className="flex items-start gap-4">
           {/* Logo */}
           <div className="flex-shrink-0">
             <div
-              className={`w-16 h-16 rounded-xl border-2 overflow-hidden ${
+              className={`w-16 h-16 rounded-xl border overflow-hidden ${
                 startup.isFeatured
                   ? "border-orange-500/50 shadow-orange-500/20"
                   : "border-border"

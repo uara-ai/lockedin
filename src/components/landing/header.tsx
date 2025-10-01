@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 import { IconLock } from "@tabler/icons-react";
 
 const menuItems = [
-  { name: "Builders", href: "#builders" },
+  { name: "Founders", href: "/founders" },
+  { name: "Startups", href: "/startups" },
   { name: "Feed", href: "/feed" },
   { name: "Features", href: "#features" },
   { name: "Pricing", href: "#pricing" },
@@ -61,7 +62,7 @@ export const HeroHeader = () => {
                       className="text-muted-foreground hover:text-accent-foreground block duration-150"
                     >
                       <span className="flex items-center gap-2">
-                        {item.name === "Builders" && (
+                        {item.name === "Startups" && (
                           <div className="size-2 rounded-full bg-orange-500 animate-pulse" />
                         )}
                         {item.name}

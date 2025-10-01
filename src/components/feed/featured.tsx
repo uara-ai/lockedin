@@ -2,40 +2,19 @@
 
 import { SidebarGroup, SidebarGroupContent } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Plus, User, Loader2, Flame } from "lucide-react";
+import { Plus, User, Loader2, Users, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { IconRosetteDiscountCheck } from "@tabler/icons-react";
 import Image from "next/image";
-
-// Mock featured profiles data - this would come from your database
-const mockFeaturedProfiles = [
-  {
-    id: "1",
-    username: "fed",
-    name: "Fed",
-    avatar:
-      "https://workoscdn.com/images/v1/a5Go7UVlxaWPLKqqIj41r6x1sS7it0mQlm2dAJuYNxI",
-    verified: true,
-    revenue: 0,
-    bio: "Building the future of web development",
-  },
-];
-
-interface FeaturedProfile {
-  id: string;
-  username: string;
-  name: string;
-  avatar?: string;
-  verified: boolean;
-  revenue: number;
-  bio: string;
-}
+import { getAllPublicUsers, getPublicUsersCount } from "@/app/data/profile";
+import type { UserProfile } from "@/app/data/profile";
+import { FeaturedLoading } from "./featured-loading";
 
 // Get profile tier styling based on performance metrics
-const getProfileTierStyling = (profile: FeaturedProfile) => {
-  const score = profile.revenue / 10000; // Simple scoring algorithm
+const getProfileTierStyling = (profile: UserProfile) => {
+  const score = (profile.currentStreak || 0) * 10; // Use streak as scoring metric
 
   if (score >= 100) {
     return "border-yellow-500/50 hover:border-yellow-500 shadow-yellow-500/20 hover:shadow-md";
@@ -48,28 +27,99 @@ const getProfileTierStyling = (profile: FeaturedProfile) => {
 };
 
 export function Featured() {
-  const [profiles, setProfiles] = useState<FeaturedProfile[]>([]);
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const observerRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchFeaturedProfiles = async () => {
+  const USERS_PER_PAGE = 10;
+
+  const fetchUsers = useCallback(
+    async (pageOffset: number, append: boolean = false) => {
       try {
-        setIsLoading(true);
-        setError(null);
+        if (append) {
+          setIsLoadingMore(true);
+        } else {
+          setIsLoading(true);
+          setError(null);
+        }
 
-        // In a real app, this would be an API call to your backend
-        setProfiles(mockFeaturedProfiles);
+        const response = await getAllPublicUsers(USERS_PER_PAGE, pageOffset);
+        if (response.success && response.data) {
+          const newUsers = response.data;
+
+          if (append) {
+            setProfiles((prev) => [...prev, ...newUsers]);
+          } else {
+            setProfiles(newUsers);
+          }
+
+          // Check if we have more users to load
+          setHasMore(newUsers.length === USERS_PER_PAGE);
+          setOffset(pageOffset + USERS_PER_PAGE);
+        } else {
+          throw new Error(response.error || "Failed to fetch users");
+        }
       } catch (err) {
-        setError("Failed to fetch featured profiles");
-        console.error("Error fetching featured profiles:", err);
+        setError("Failed to fetch users");
+        console.error("Error fetching users:", err);
       } finally {
         setIsLoading(false);
+        setIsLoadingMore(false);
+      }
+    },
+    [USERS_PER_PAGE]
+  );
+
+  // Fetch total count
+  const fetchTotalCount = useCallback(async () => {
+    try {
+      const response = await getPublicUsersCount();
+      if (response.success && response.data) {
+        setTotalCount(response.data.count);
+      }
+    } catch (err) {
+      console.error("Error fetching total count:", err);
+    }
+  }, []);
+
+  // Initial load
+  useEffect(() => {
+    fetchUsers(0, false);
+    fetchTotalCount();
+  }, [fetchUsers, fetchTotalCount]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasMore &&
+          !isLoadingMore &&
+          !isLoading
+        ) {
+          fetchUsers(offset, true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadingRef.current) {
+      observer.observe(loadingRef.current);
+    }
+
+    return () => {
+      if (loadingRef.current) {
+        observer.unobserve(loadingRef.current);
       }
     };
-
-    fetchFeaturedProfiles();
-  }, []);
+  }, [hasMore, isLoadingMore, isLoading, offset, fetchUsers]);
 
   const hasProfiles = profiles.length > 0;
 
@@ -83,35 +133,16 @@ export function Featured() {
       .slice(0, 2);
   };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000) {
-      return `$${(amount / 1000000).toFixed(1)}M`;
-    }
-    if (amount >= 1000) {
-      return `$${(amount / 1000).toFixed(0)}K`;
-    }
-    return `$${amount}`;
+  // Format streak count
+  const formatStreak = (streak: number | null) => {
+    if (!streak || streak === 0) return "0";
+    if (streak >= 100) return `${streak}`;
+    if (streak >= 10) return `${streak}`;
+    return `${streak}`;
   };
 
   if (isLoading) {
-    return (
-      <SidebarGroup className="px-0">
-        <SidebarGroupContent>
-          <div className="group/featured p-3 space-y-2">
-            <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-500 fill-current" />
-              <h2 className="text-sm font-semibold text-foreground">
-                Featured
-              </h2>
-            </div>
-            <div className="flex items-center justify-center p-6 text-center">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          </div>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    );
+    return <FeaturedLoading />;
   }
 
   if (error || !hasProfiles) {
@@ -119,11 +150,18 @@ export function Featured() {
       <SidebarGroup className="px-0">
         <SidebarGroupContent>
           <div className="group/featured p-3 space-y-2">
-            <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-500 fill-current" />
-              <h2 className="text-sm font-semibold text-foreground">
-                Featured
-              </h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <h2 className="text-sm font-semibold text-foreground">
+                  Founders
+                </h2>
+              </div>
+              {totalCount !== null && (
+                <span className="text-xs text-orange-500">
+                  {totalCount} total
+                </span>
+              )}
             </div>
             {/* Null state */}
             <div className="flex flex-col items-center justify-center p-6 text-center space-y-3">
@@ -132,20 +170,18 @@ export function Featured() {
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">
-                  {error
-                    ? "Failed to load profiles"
-                    : "No featured builders yet"}
+                  {error ? "Failed to load founders" : "No founders yet"}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {error
                     ? "Check your connection and try again"
-                    : "Build consistently to get featured"}
+                    : "Be the first to join the community"}
                 </p>
               </div>
               <Button variant="outline" size="sm" className="text-xs" asChild>
-                <Link href="/featured/apply">
-                  <Flame className="h-3 w-3 mr-1" />
-                  Be Featured
+                <Link href="/feed/new">
+                  <Plus className="h-3 w-3 mr-1" />
+                  Join Now
                 </Link>
               </Button>
             </div>
@@ -156,17 +192,26 @@ export function Featured() {
   }
 
   return (
-    <SidebarGroup className="px-0">
+    <SidebarGroup className="px-0 h-full scrollbar-hide">
       <SidebarGroupContent>
         <div className="group/featured p-3 space-y-3">
-          <div className="flex items-center gap-2">
-            <Flame className="h-4 w-4 text-orange-500 fill-current" />
-            <h2 className="text-sm font-semibold text-foreground">Featured</h2>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Flame className="h-4 w-4 text-orange-500" />
+              <h2 className="text-sm font-semibold text-foreground">
+                Founders
+              </h2>
+            </div>
+            {totalCount !== null && (
+              <span className="text-xs text-orange-500">
+                {totalCount} total
+              </span>
+            )}
           </div>
 
-          {/* Mini cards layout - 1 profile stacked */}
-          <div className="space-y-2">
-            {profiles.slice(0, 1).map((profile) => (
+          {/* Mini cards layout - show all profiles with infinite scroll */}
+          <div className="space-y-2 overflow-y-auto">
+            {profiles.map((profile) => (
               <Link
                 key={profile.id}
                 href={`/${profile.username}`}
@@ -187,7 +232,7 @@ export function Featured() {
                     {profile.avatar ? (
                       <Image
                         src={profile.avatar}
-                        alt={profile.name}
+                        alt={profile.name || ""}
                         className="w-full h-full object-cover"
                         loading="lazy"
                         width={33}
@@ -195,7 +240,7 @@ export function Featured() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-xs font-medium">
-                        {getInitials(profile.name)}
+                        {getInitials(profile.name || "")}
                       </div>
                     )}
                   </div>
@@ -216,17 +261,39 @@ export function Featured() {
                 </div>
 
                 <div className="text-right">
-                  <div className="text-xs font-medium text-green-600">
-                    {formatCurrency(profile.revenue)}
+                  <div className="text-xs font-medium text-blue-600">
+                    {formatStreak(profile.currentStreak)}
                   </div>
-                  <div className="text-xs text-muted-foreground">revenue</div>
+                  <div className="text-xs text-muted-foreground">streak</div>
                 </div>
               </Link>
             ))}
 
-            {/* Be Featured Button - Always visible */}
+            {/* Loading indicator for infinite scroll */}
+            {isLoadingMore && (
+              <div
+                ref={loadingRef}
+                className="flex items-center justify-center p-4"
+              >
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-xs text-muted-foreground">
+                  Loading more founders...
+                </span>
+              </div>
+            )}
+
+            {/* End of list indicator */}
+            {!hasMore && profiles.length > 0 && (
+              <div className="flex items-center justify-center p-2">
+                <span className="text-xs text-muted-foreground">
+                  All founders loaded
+                </span>
+              </div>
+            )}
+
+            {/* Join Now Button - Always visible */}
             <Link
-              href="/apply"
+              href="/feed/new"
               className={cn(
                 "flex items-center justify-center gap-2 p-2 rounded-lg",
                 "border-2 border-dashed border-orange-500/30",
@@ -235,25 +302,9 @@ export function Featured() {
                 "font-medium"
               )}
             >
-              <Flame className="h-4 w-4" />
-              <span>Be Featured</span>
+              <Plus className="h-4 w-4" />
+              <span>Join Now</span>
             </Link>
-
-            {/* View More Button - Only show if more than 1 profile */}
-            {profiles.length > 1 && (
-              <Link
-                href="/featured"
-                className={cn(
-                  "flex items-center justify-center gap-2 p-2 rounded-lg",
-                  "border-2 border-dashed border-muted-foreground/30",
-                  "hover:border-muted-foreground/50 hover:bg-muted/30",
-                  "text-sm text-muted-foreground transition-all duration-200"
-                )}
-              >
-                <Plus className="h-4 w-4" />
-                <span>View {profiles.length - 1} more builders</span>
-              </Link>
-            )}
           </div>
         </div>
       </SidebarGroupContent>
