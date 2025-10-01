@@ -30,7 +30,7 @@ import {
   type StartupWithDetails,
 } from "@/app/data/startups";
 import { StartupStatus, StartupStage } from "@prisma/client";
-import { IconX, IconPlus } from "@tabler/icons-react";
+import { IconX, IconPlus, IconLoader2, IconCheck } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 interface StartupFormProps {
@@ -68,15 +68,30 @@ export function StartupForm({
 }: StartupFormProps) {
   const [loading, setLoading] = useState(false);
   const [techInput, setTechInput] = useState("");
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
 
-  // Generate slug from name
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-      .trim();
+  // Check slug availability with debouncing
+  const checkSlugAvailability = async (slug: string) => {
+    if (!slug || slug === startup?.slug) {
+      setSlugAvailable(null);
+      return;
+    }
+
+    setIsCheckingSlug(true);
+    try {
+      const response = await fetch(
+        `/api/startups/check-slug?slug=${encodeURIComponent(slug)}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSlugAvailable(data.available);
+      }
+    } catch (error) {
+      console.error("Error checking slug availability:", error);
+    } finally {
+      setIsCheckingSlug(false);
+    }
   };
 
   // Form state
@@ -213,7 +228,6 @@ export function StartupForm({
                       setFormData((prev) => ({
                         ...prev,
                         name,
-                        slug: !startup ? generateSlug(name) : prev.slug, // Auto-generate slug only for new startups
                       }));
                     }}
                     placeholder="Enter startup name"
@@ -222,23 +236,46 @@ export function StartupForm({
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="slug">URL Slug *</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        slug: e.target.value
-                          .toLowerCase()
-                          .replace(/[^a-z0-9-]/g, ""),
-                      }))
-                    }
-                    placeholder="url-friendly-identifier"
-                    required
-                  />
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        id="slug"
+                        value={formData.slug}
+                        onChange={(e) => {
+                          const slug = e.target.value
+                            .toLowerCase()
+                            .replace(/[^a-z0-9-]/g, "");
+                          setFormData((prev) => ({
+                            ...prev,
+                            slug,
+                          }));
+                          // Check availability with debouncing
+                          setTimeout(() => checkSlugAvailability(slug), 500);
+                        }}
+                        placeholder="url-friendly-identifier"
+                        required
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {isCheckingSlug && (
+                          <IconLoader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        )}
+                        {!isCheckingSlug && slugAvailable === true && (
+                          <IconCheck className="h-4 w-4 text-green-500" />
+                        )}
+                        {!isCheckingSlug && slugAvailable === false && (
+                          <IconX className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     Used in URLs: /startups/{formData.slug || "your-slug"}
                   </p>
+                  {slugAvailable === false && (
+                    <p className="text-xs text-red-500">
+                      This slug is already taken
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -572,7 +609,12 @@ export function StartupForm({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || !formData.name.trim()}>
+            <Button
+              type="submit"
+              disabled={
+                loading || !formData.name.trim() || slugAvailable === false
+              }
+            >
               {loading
                 ? "Saving..."
                 : startup
