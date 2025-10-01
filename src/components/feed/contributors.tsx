@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Plus, Github, Loader2, Building2 } from "lucide-react";
+import { Plus, Github, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@/app/data/github";
 import Link from "next/link";
 import Image from "next/image";
+import { ContributorsLoading } from "./contributors-loading";
 
 // Company logo component
 const CompanyLogo = ({ company }: { company?: string }) => {
@@ -89,23 +90,7 @@ export function Contributors() {
   };
 
   if (isLoading) {
-    return (
-      <SidebarGroup className="px-0">
-        <SidebarGroupContent>
-          <div className="group/contributors p-3 [--cell-size:--spacing(8)] space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">
-              Contributors
-            </h2>
-            <div className="flex flex-col items-center justify-center p-6 text-center space-y-3">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                Loading contributors...
-              </p>
-            </div>
-          </div>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    );
+    return <ContributorsLoading />;
   }
 
   if (error || !hasContributors) {
