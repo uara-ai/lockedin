@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Plus, Heart, Crown, Star, Zap } from "lucide-react";
+import { Plus, Heart, Crown, Star, Zap, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -93,6 +93,7 @@ const getTierStyling = (planType: string) => {
 export function Sponsors() {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchSponsors = async () => {
@@ -114,11 +115,63 @@ export function Sponsors() {
 
   const hasSponsors = sponsors.length > 0;
 
+  const copyCouponCode = async () => {
+    try {
+      await navigator.clipboard.writeText("EARLY50");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy coupon code:", err);
+    }
+  };
+
   return (
     <SidebarGroup className="px-0">
       <SidebarGroupContent>
         <div className="group/sponsors p-3 [--cell-size:--spacing(8)] space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">Sponsors</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground">Sponsors</h2>
+
+            {/* Early Adopter Coupon Badge */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={copyCouponCode}
+                  className={cn(
+                    "h-6 px-2 text-xs font-mono bg-gradient-to-r from-orange-500/10 to-red-500/10",
+                    "border-orange-500/30 hover:border-orange-500/50 hover:bg-orange-500/20",
+                    "transition-all duration-200 hover:scale-105",
+                    copied && "border-green-500/50 bg-green-500/10"
+                  )}
+                >
+                  <div className="flex items-center gap-1">
+                    {copied ? (
+                      <>
+                        <Check className="size-2.5 text-green-500" />
+                        <span className="text-green-600">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="size-2.5" />
+                        <span className="font-semibold">EARLY50</span>
+                      </>
+                    )}
+                  </div>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-center">
+                  <span className="font-semibold">Early Adopter Discount</span>
+                  <br />
+                  <span className="text-xs text-muted-foreground">
+                    Click to copy 50% off code
+                  </span>
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
           {isLoading ? (
             <SponsorsLoading />
