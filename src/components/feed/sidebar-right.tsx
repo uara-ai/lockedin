@@ -15,7 +15,7 @@ import { Contributors } from "./contributors";
 import { SocialsHeader } from "./socials-header";
 import Link from "next/link";
 import { Featured } from "./featured";
-import { Members } from "./members";
+// import { Members } from "./members";
 
 export function SidebarRight({
   ...props
@@ -23,20 +23,20 @@ export function SidebarRight({
   return (
     <Sidebar
       collapsible="none"
-      className="sticky top-0 hidden h-svh border-l lg:flex"
+      className="sticky top-0 hidden h-svh border-l lg:flex scrollbar-hide"
       {...props}
     >
       <SidebarHeader className="border-sidebar-border h-16 border-b">
         <SocialsHeader />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="scrollbar-hide">
         <Sponsors />
-        <SidebarSeparator className="mx-0" />
-        <Contributors />
         <SidebarSeparator className="mx-0" />
         <Featured />
         <SidebarSeparator className="mx-0" />
-        <Members />
+        <Contributors />
+        <SidebarSeparator className="mx-0" />
+        {/* <Members /> */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
