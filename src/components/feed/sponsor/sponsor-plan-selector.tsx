@@ -8,7 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Star, Crown, Zap } from "lucide-react";
-import { getAllSponsorPlans, type SponsorPlan } from "@/lib/sponsor-plans";
+import { getAllSponsorPlans, type SponsorPlan } from "@/lib/plans";
 import Link from "next/link";
 
 interface SponsorPlanSelectorProps {

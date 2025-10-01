@@ -1,5 +1,5 @@
 import { SponsorPage } from "@/components/feed/sponsor";
-import { getSponsorPlan } from "@/lib/sponsor-plans";
+import { getSponsorPlan } from "@/lib/plans";
 import { notFound } from "next/navigation";
 
 interface SponsorPlanPageProps {

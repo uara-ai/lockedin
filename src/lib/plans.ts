@@ -24,7 +24,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     polarProductId:
       process.env.NODE_ENV === "development"
         ? "c053485a-5989-4dfb-8ffe-878b70b67d99"
-        : "prod_123_production", // TODO: Add product ID
+        : "d9fb9a87-a44e-493b-9be6-130eca83ae99", // production code
     features: [
       "Featured placement in sidebar",
       "Direct link to your startup",
@@ -45,7 +45,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     polarProductId:
       process.env.NODE_ENV === "development"
         ? "c053485a-5989-4dfb-8ffe-878b70b67d99"
-        : "prod_123_production", // TODO: Add product ID
+        : "4207dcfa-3828-4c18-b270-a6acbf054d00", // Production code
     features: [
       "Featured placement in sidebar",
       "Priority in sponsor grid",
@@ -67,7 +67,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     polarProductId:
       process.env.NODE_ENV === "development"
         ? "c053485a-5989-4dfb-8ffe-878b70b67d99"
-        : "prod_123_production", // TODO: Add product ID
+        : "c77e5efc-b97b-49c1-a8fe-36270e3c9cd4", // Production code
     features: [
       "Featured placement in sidebar",
       "Priority in sponsor grid",
