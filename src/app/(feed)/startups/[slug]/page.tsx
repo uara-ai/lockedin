@@ -186,7 +186,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
           <div className="font-mono text-xs mb-1 text-orange-500">
             Tech Stack
           </div>
-          <div>
+          <div className="flex flex-wrap gap-2">
             {startup.techStack.map((tech) => (
               <Badge key={tech} className="text-xs">
                 {tech}

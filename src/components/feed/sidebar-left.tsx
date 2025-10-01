@@ -21,6 +21,7 @@ import {
   IconUser,
   IconPalette,
   IconRocket,
+  IconSettings,
 } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -50,6 +51,11 @@ const data = {
     },
   ],
   navSecondary: [
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: IconSettings,
+    },
     {
       title: "Stay updated",
       url: "https://x.com/locked_fed",
