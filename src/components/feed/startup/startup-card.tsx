@@ -179,6 +179,15 @@ export function StartupCard({
               </p>
             )}
 
+            {/* Tag */}
+            {startup.tag && (
+              <div className="mb-2">
+                <Badge variant="secondary" className="text-xs">
+                  {startup.tag}
+                </Badge>
+              </div>
+            )}
+
             {/* Key Metrics - Responsive Dashboard Style */}
             <div className="flex items-center gap-2 sm:gap-4 text-xs flex-wrap">
               {startup.revenue !== null && (

@@ -40,16 +40,17 @@ model User {
   xSyncEnabled Boolean @default(true)
 
   // Relations
-  posts           Post[]
-  likes           Like[]
-  comments        Comment[]
-  followers       Follow[]          @relation("UserFollows")
-  following       Follow[]          @relation("UserFollowing")
-  activityLogs    ActivityLog[]
-  achievements    UserAchievement[]
-  revenueAccounts RevenueAccount[]
-  dailyStreaks    DailyStreak[]
-  startups        Startup[]
+  posts                Post[]
+  likes                Like[]
+  comments             Comment[]
+  followers            Follow[]              @relation("UserFollows")
+  following            Follow[]              @relation("UserFollowing")
+  activityLogs         ActivityLog[]
+  achievements         UserAchievement[]
+  revenueAccounts      RevenueAccount[]
+  dailyStreaks         DailyStreak[]
+  startups             Startup[]
+  sponsorSubscriptions SponsorSubscription[]
 
   @@map("users")
 }
@@ -357,8 +358,10 @@ model Startup {
   id          String  @id @default(uuid())
   userId      String
   name        String
+  slug        String  @unique // URL-friendly identifier
   description String?
   tagline     String? // Brief one-liner
+  tag         String? // Startup category/tag
   website     String?
   logo        String? // URL to logo image
 
@@ -391,10 +394,62 @@ model Startup {
   updatedAt DateTime @updatedAt
 
   // Relations
-  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  milestones StartupMilestone[]
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones           StartupMilestone[]
+  sponsorSubscriptions SponsorSubscription[]
 
   @@map("startups")
+}
+
+// Sponsor subscription model for Polar integration
+model SponsorSubscription {
+  id        String  @id @default(uuid())
+  userId    String
+  startupId String? // Optional - can be null for general sponsorship
+
+  // Polar integration
+  polarCustomerId     String? // Polar customer ID
+  polarSubscriptionId String? // For recurring subscriptions
+  polarOrderId        String? // For one-time payments
+
+  // Subscription details
+  planType SponsorPlanType
+  status   SponsorStatus   @default(ACTIVE)
+  amount   Decimal
+  currency String          @default("USD")
+
+  // Billing
+  billingInterval String? // "month", "year", "lifetime"
+  nextBillingDate DateTime?
+
+  // Benefits
+  isFeatured    Boolean @default(false)
+  priorityOrder Int     @default(0)
+  customBadge   String?
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime? // For lifetime plans, this might be null
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startup Startup? @relation(fields: [startupId], references: [id], onDelete: Cascade)
+
+  @@map("sponsor_subscriptions")
+}
+
+enum SponsorPlanType {
+  LIFETIME
+  MONTHLY
+  ANNUAL
+}
+
+enum SponsorStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PENDING
 }
 
 enum StartupStatus {

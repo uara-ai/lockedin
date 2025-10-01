@@ -61,7 +61,7 @@ export function SidebarLeft({
         <div className="py-4 px-2 border-b">
           <Logo />
         </div>
-        <Button variant="outline" className="w-full" asChild>
+        <Button variant="default" className="w-full" asChild>
           <Link href="/feed/new">
             <Plus />
             New Post

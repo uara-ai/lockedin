@@ -69,11 +69,23 @@ export function StartupForm({
   const [loading, setLoading] = useState(false);
   const [techInput, setTechInput] = useState("");
 
+  // Generate slug from name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .trim();
+  };
+
   // Form state
   const [formData, setFormData] = useState({
     name: startup?.name || "",
+    slug: startup?.slug || "",
     description: startup?.description || "",
     tagline: startup?.tagline || "",
+    tag: startup?.tag || "",
     website: startup?.website || "",
     status: startup?.status || StartupStatus.IDEA,
     stage: startup?.stage || StartupStage.PRE_SEED,
@@ -99,8 +111,10 @@ export function StartupForm({
     try {
       const submitData: CreateStartupInput | UpdateStartupInput = {
         name: formData.name,
+        slug: formData.slug,
         description: formData.description || undefined,
         tagline: formData.tagline || undefined,
+        tag: formData.tag || undefined,
         website: formData.website || undefined,
         status: formData.status,
         stage: formData.stage,
@@ -194,13 +208,41 @@ export function StartupForm({
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, name: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        name,
+                        slug: !startup ? generateSlug(name) : prev.slug, // Auto-generate slug only for new startups
+                      }));
+                    }}
                     placeholder="Enter startup name"
                     required
                   />
                 </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="slug">URL Slug *</Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        slug: e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-]/g, ""),
+                      }))
+                    }
+                    placeholder="url-friendly-identifier"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Used in URLs: /startups/{formData.slug || "your-slug"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="tagline">Tagline</Label>
                   <Input
@@ -213,6 +255,20 @@ export function StartupForm({
                       }))
                     }
                     placeholder="Brief one-liner"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="tag">Category Tag</Label>
+                  <Input
+                    id="tag"
+                    value={formData.tag}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        tag: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g., SaaS, AI, E-commerce"
                   />
                 </div>
               </div>

@@ -12,8 +12,10 @@ import { StartupStatus, StartupStage, MilestoneType } from "@prisma/client";
 export interface StartupWithDetails {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   tagline: string | null;
+  tag: string | null;
   website: string | null;
   logo: string | null;
   status: StartupStatus;
@@ -58,8 +60,17 @@ export interface StartupMilestone {
 // Validation schemas
 const createStartupSchema = z.object({
   name: z.string().min(1).max(100),
+  slug: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must contain only lowercase letters, numbers, and hyphens"
+    ),
   description: z.string().max(1000).optional(),
   tagline: z.string().max(150).optional(),
+  tag: z.string().max(50).optional(),
   website: z.string().url().optional(),
   status: z.nativeEnum(StartupStatus).default(StartupStatus.IDEA),
   stage: z.nativeEnum(StartupStage).default(StartupStage.PRE_SEED),
@@ -78,8 +89,18 @@ const createStartupSchema = z.object({
 
 const updateStartupSchema = z.object({
   name: z.string().min(1).max(100).optional(),
+  slug: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must contain only lowercase letters, numbers, and hyphens"
+    )
+    .optional(),
   description: z.string().max(1000).optional(),
   tagline: z.string().max(150).optional(),
+  tag: z.string().max(50).optional(),
   website: z.string().url().optional(),
   status: z.nativeEnum(StartupStatus).optional(),
   stage: z.nativeEnum(StartupStage).optional(),
@@ -173,8 +194,10 @@ export async function createStartup(
     const startupWithDetails: StartupWithDetails = {
       id: startup.id,
       name: startup.name,
+      slug: startup.slug,
       description: startup.description,
       tagline: startup.tagline,
+      tag: startup.tag,
       website: startup.website,
       logo: startup.logo,
       status: startup.status,
@@ -254,8 +277,10 @@ export async function getStartupsByUser(
       (startup) => ({
         id: startup.id,
         name: startup.name,
+        slug: startup.slug,
         description: startup.description,
         tagline: startup.tagline,
+        tag: startup.tag,
         website: startup.website,
         logo: startup.logo,
         status: startup.status,
@@ -330,8 +355,10 @@ export async function getMyStartups(): Promise<
       (startup) => ({
         id: startup.id,
         name: startup.name,
+        slug: startup.slug,
         description: startup.description,
         tagline: startup.tagline,
+        tag: startup.tag,
         website: startup.website,
         logo: startup.logo,
         status: startup.status,
@@ -364,6 +391,100 @@ export async function getMyStartups(): Promise<
     return {
       success: false,
       error: appErrors.DATABASE_ERROR,
+    };
+  }
+}
+
+/**
+ * Get a single startup by slug
+ */
+export async function getStartupBySlug(
+  slug: string
+): Promise<ActionResponse<StartupWithDetails>> {
+  try {
+    const startup = await prisma.startup.findUnique({
+      where: { slug: slug },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            avatar: true,
+            verified: true,
+          },
+        },
+        _count: {
+          select: {
+            milestones: true,
+          },
+        },
+      },
+    });
+
+    if (!startup) {
+      return {
+        success: false,
+        error: appErrors.NOT_FOUND,
+      };
+    }
+
+    // Check if startup is public or user owns it
+    let canAccess = startup.isPublic;
+    try {
+      const { user: authUser } = await withAuth();
+      if (authUser && startup.userId === authUser.id) {
+        canAccess = true;
+      }
+    } catch {
+      // Not authenticated
+    }
+
+    if (!canAccess) {
+      return {
+        success: false,
+        error: appErrors.UNAUTHORIZED,
+      };
+    }
+
+    const startupWithDetails: StartupWithDetails = {
+      id: startup.id,
+      name: startup.name,
+      slug: startup.slug,
+      description: startup.description,
+      tagline: startup.tagline,
+      tag: startup.tag,
+      website: startup.website,
+      logo: startup.logo,
+      status: startup.status,
+      stage: startup.stage,
+      foundedAt: startup.foundedAt,
+      revenue: startup.revenue ? Number(startup.revenue) : null,
+      employees: startup.employees,
+      funding: startup.funding ? Number(startup.funding) : null,
+      valuation: startup.valuation ? Number(startup.valuation) : null,
+      twitterHandle: startup.twitterHandle,
+      linkedinUrl: startup.linkedinUrl,
+      githubRepo: startup.githubRepo,
+      industry: startup.industry,
+      techStack: startup.techStack,
+      isPublic: startup.isPublic,
+      isFeatured: startup.isFeatured,
+      createdAt: startup.createdAt,
+      updatedAt: startup.updatedAt,
+      user: startup.user,
+      _count: startup._count,
+    };
+
+    return {
+      success: true,
+      data: startupWithDetails,
+    };
+  } catch (error) {
+    console.error("Error fetching startup by slug:", error);
+    return {
+      success: false,
+      error: appErrors.UNEXPECTED_ERROR,
     };
   }
 }
@@ -423,8 +544,10 @@ export async function getStartup(
     const startupWithDetails: StartupWithDetails = {
       id: startup.id,
       name: startup.name,
+      slug: startup.slug,
       description: startup.description,
       tagline: startup.tagline,
+      tag: startup.tag,
       website: startup.website,
       logo: startup.logo,
       status: startup.status,
@@ -526,8 +649,10 @@ export async function updateStartup(
     const startupWithDetails: StartupWithDetails = {
       id: updatedStartup.id,
       name: updatedStartup.name,
+      slug: updatedStartup.slug,
       description: updatedStartup.description,
       tagline: updatedStartup.tagline,
+      tag: updatedStartup.tag,
       website: updatedStartup.website,
       logo: updatedStartup.logo,
       status: updatedStartup.status,
