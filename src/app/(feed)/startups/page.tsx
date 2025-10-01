@@ -2,6 +2,40 @@ import { getAllStartups } from "@/app/data/startups";
 import { StartupsList } from "@/components/feed/startup/startups-list";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Metadata } from "next";
+
+export const revalidate = 60 * 60; // 1 hour
+
+export const metadata: Metadata = {
+  title: "Startups - LockedIn",
+  description: "Discover startups building the future",
+  openGraph: {
+    title: "Startups - LockedIn",
+    description: "Discover startups building the future",
+    type: "website",
+    images: [
+      {
+        url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
+        }/lockedin.png`,
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Startups - LockedIn",
+    description: "Discover startups building the future",
+  },
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
+  ),
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 // Loading skeleton for the page
 function StartupsPageSkeleton() {
