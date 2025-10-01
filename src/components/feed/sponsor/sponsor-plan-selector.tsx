@@ -86,7 +86,7 @@ export function SponsorPlanSelector({
             Select a startup first
           </h3>
           <p className="text-muted-foreground">
-            Choose which startup you'd like to sponsor to see pricing plans
+            Choose which startup you&apos;d like to sponsor to see pricing plans
           </p>
         </div>
       )}

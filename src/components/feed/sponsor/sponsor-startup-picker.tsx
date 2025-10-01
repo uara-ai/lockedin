@@ -16,6 +16,7 @@ import {
   IconTax,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface SponsorStartupPickerProps {
   onStartupSelect: (startupId: string) => void;
@@ -119,7 +120,7 @@ export function SponsorStartupPicker({
               it.
             </p>
             <Button asChild>
-              <a href="/profile/edit">Add Startup</a>
+              <Link href="/profile/edit">Add Startup</Link>
             </Button>
           </div>
         </CardContent>
