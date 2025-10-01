@@ -3,7 +3,7 @@ import { StartupsList } from "@/components/feed/startup/startups-list";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const revalidate = 60 * 60; // 1 hour
+export const dynamic = "force-dynamic";
 
 // Loading skeleton for the page
 function StartupsPageSkeleton() {
@@ -110,6 +110,15 @@ export async function generateMetadata() {
       description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on LockedIn.`,
       type: "website",
     },
+    images: [
+      {
+        url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
+        }/lockedin.png`,
+        width: 1200,
+        height: 630,
+      },
+    ],
     twitter: {
       card: "summary_large_image",
       title: `Startups - LockedIn`,
