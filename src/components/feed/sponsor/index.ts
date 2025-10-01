@@ -5,3 +5,4 @@ export { SponsorPlanCard } from "./sponsor-plan-card";
 export { SponsorLoadingState } from "./sponsor-loading-state";
 export { SponsorEmptyState } from "./sponsor-empty-state";
 export { SponsorPlanSelector } from "./sponsor-plan-selector";
+export { SponsorStartupPicker } from "./sponsor-startup-picker";

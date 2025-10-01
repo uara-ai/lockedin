@@ -38,13 +38,13 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     id: "lifetime",
     name: "Lifetime Sponsor",
     description: "One-time payment, lifetime benefits",
-    price: 299,
+    price: 199,
     currency: "USD",
     type: "lifetime",
     trialDays: 0,
     polarProductId:
       process.env.NODE_ENV === "development"
-        ? "c053485a-5989-4dfb-8ffe-878b70b67d99"
+        ? "95c62088-bd93-4cb3-9bb9-4556240d0273"
         : "4207dcfa-3828-4c18-b270-a6acbf054d00", // Production code
     features: [
       "Featured placement in sidebar",
@@ -53,7 +53,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
       "Lifetime access",
       "Direct link to your startup",
     ],
-    color: "bg-purple-500",
+    color: "bg-orange-500",
     icon: "Crown",
   },
   annual: {
@@ -66,7 +66,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     trialDays: 0,
     polarProductId:
       process.env.NODE_ENV === "development"
-        ? "c053485a-5989-4dfb-8ffe-878b70b67d99"
+        ? "00ff744a-21b8-42df-af78-d1f8eb73f838"
         : "c77e5efc-b97b-49c1-a8fe-36270e3c9cd4", // Production code
     features: [
       "Featured placement in sidebar",
@@ -75,7 +75,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
       "2 months free vs monthly",
       "Direct link to your startup",
     ],
-    color: "bg-green-500",
+    color: "bg-indigo-500",
     icon: "Zap",
   },
 };

@@ -1,22 +1,31 @@
-import { SponsorPage } from "@/components/feed/sponsor";
-import { getSponsorPlan } from "@/lib/plans";
+"use client";
+
+import { useState } from "react";
+import { SponsorPlanSelector } from "@/components/feed/sponsor/sponsor-plan-selector";
+import { SponsorStartupPicker } from "@/components/feed/sponsor/sponsor-startup-picker";
 
 export default function SponsorPageRoute() {
-  // Get the monthly plan by default
-  const plan = getSponsorPlan("monthly");
+  const [selectedStartupId, setSelectedStartupId] = useState<
+    string | undefined
+  >();
 
-  if (!plan) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Plan not found</h1>
-          <p className="text-muted-foreground">
-            The requested sponsor plan is not available.
-          </p>
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Startup Selection */}
+          <SponsorStartupPicker
+            onStartupSelect={setSelectedStartupId}
+            selectedStartupId={selectedStartupId}
+          />
+
+          {/* Pricing Plans */}
+          <SponsorPlanSelector
+            showAllPlans={true}
+            selectedStartupId={selectedStartupId}
+          />
         </div>
       </div>
-    );
-  }
-
-  return <SponsorPage plan={plan} />;
+    </div>
+  );
 }
