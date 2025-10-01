@@ -1,4 +1,4 @@
-import { SponsorPage } from "@/components/sponsor";
+import { SponsorPage } from "@/components/feed/sponsor";
 import { getSponsorPlan } from "@/lib/sponsor-plans";
 import { notFound } from "next/navigation";
 

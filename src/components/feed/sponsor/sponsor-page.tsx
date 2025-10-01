@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { getMyStartups, type StartupWithDetails } from "@/app/data/startups";
-import { SponsorHeader } from "@/components/sponsor/sponsor-header";
-import { SponsorStartupSelector } from "@/components/sponsor/sponsor-startup-selector";
-import { SponsorPlanCard } from "@/components/sponsor/sponsor-plan-card";
-import { SponsorLoadingState } from "@/components/sponsor/sponsor-loading-state";
-import { SponsorEmptyState } from "@/components/sponsor/sponsor-empty-state";
+import { SponsorHeader } from "@/components/feed/sponsor/sponsor-header";
+import { SponsorStartupSelector } from "@/components/feed/sponsor/sponsor-startup-selector";
+import { SponsorPlanCard } from "@/components/feed/sponsor/sponsor-plan-card";
+import { SponsorLoadingState } from "@/components/feed/sponsor/sponsor-loading-state";
+import { SponsorEmptyState } from "@/components/feed/sponsor/sponsor-empty-state";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 interface SponsorPageProps {
