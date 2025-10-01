@@ -25,6 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/startups`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/apply`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -87,6 +93,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
+    // Get all public startups for individual startup pages
+    const startups = await prisma.startup.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+      where: {
+        isPublic: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    // Generate startup URLs
+    const startupRoutes: MetadataRoute.Sitemap = startups.map((startup) => ({
+      url: `${baseUrl}/startups/${startup.slug}`,
+      lastModified: startup.updatedAt,
+      changeFrequency: "daily" as const,
+      priority: 0.9,
+    }));
+
     // Get all unique tags for potential tag pages (if you have them)
     const tags = await prisma.tag.findMany({
       select: {
@@ -128,6 +156,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...staticRoutes,
       ...userRoutes,
       ...postRoutes,
+      ...startupRoutes,
       // Uncomment when tag pages are implemented
       // ...tagRoutes,
     ];

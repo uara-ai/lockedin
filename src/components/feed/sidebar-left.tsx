@@ -20,6 +20,7 @@ import {
   IconFlame,
   IconUser,
   IconPalette,
+  IconRocket,
 } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -31,6 +32,11 @@ const data = {
       title: "Feed",
       url: "/feed",
       icon: IconBrandFeedly,
+    },
+    {
+      title: "Startups",
+      url: "/startups",
+      icon: IconRocket,
     },
     {
       title: "Featured",

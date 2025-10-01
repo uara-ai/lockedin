@@ -241,6 +241,102 @@ export async function createStartup(
 }
 
 /**
+ * Get all public startups with pagination
+ */
+export async function getAllStartups(
+  page: number = 1,
+  limit: number = 20
+): Promise<
+  ActionResponse<{
+    startups: StartupWithDetails[];
+    total: number;
+    hasMore: boolean;
+  }>
+> {
+  try {
+    const skip = (page - 1) * limit;
+
+    const [startups, total] = await Promise.all([
+      prisma.startup.findMany({
+        where: {
+          isPublic: true,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              avatar: true,
+              verified: true,
+            },
+          },
+          _count: {
+            select: {
+              milestones: true,
+            },
+          },
+        },
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        skip,
+        take: limit,
+      }),
+      prisma.startup.count({
+        where: {
+          isPublic: true,
+        },
+      }),
+    ]);
+
+    const startupsWithDetails: StartupWithDetails[] = startups.map(
+      (startup) => ({
+        id: startup.id,
+        name: startup.name,
+        slug: startup.slug,
+        description: startup.description,
+        tagline: startup.tagline,
+        tag: startup.tag,
+        website: startup.website,
+        logo: startup.logo,
+        status: startup.status,
+        stage: startup.stage,
+        foundedAt: startup.foundedAt,
+        revenue: startup.revenue ? Number(startup.revenue) : null,
+        employees: startup.employees,
+        funding: startup.funding ? Number(startup.funding) : null,
+        valuation: startup.valuation ? Number(startup.valuation) : null,
+        twitterHandle: startup.twitterHandle,
+        linkedinUrl: startup.linkedinUrl,
+        githubRepo: startup.githubRepo,
+        industry: startup.industry,
+        techStack: startup.techStack,
+        isPublic: startup.isPublic,
+        isFeatured: startup.isFeatured,
+        createdAt: startup.createdAt,
+        updatedAt: startup.updatedAt,
+        user: startup.user,
+        _count: startup._count,
+      })
+    );
+
+    return {
+      success: true,
+      data: {
+        startups: startupsWithDetails,
+        total,
+        hasMore: skip + limit < total,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching all startups:", error);
+    return {
+      success: false,
+      error: appErrors.DATABASE_ERROR,
+    };
+  }
+}
+
+/**
  * Get startups by user ID
  */
 export async function getStartupsByUser(

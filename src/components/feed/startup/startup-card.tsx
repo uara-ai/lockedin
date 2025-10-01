@@ -29,12 +29,14 @@ import {
   IconTarget,
   IconWorld,
   IconTax,
+  IconArrowRight,
 } from "@tabler/icons-react";
 import { type StartupWithDetails, deleteStartup } from "@/app/data/startups";
 import { StartupForm } from "./startup-form";
 import { toast } from "sonner";
 import { FaviconImage } from "@/components/ui/favicon-image";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface StartupCardProps {
   startup: StartupWithDetails;
@@ -116,267 +118,185 @@ export function StartupCard({
     <>
       <div
         className={cn(
-          "group/startup p-3 sm:p-4 rounded-lg transition-all duration-200",
+          "group/startup p-3 rounded-lg transition-all duration-200 cursor-pointer",
           "border border-transparent hover:border-border hover:bg-muted/30",
-          "space-y-3 w-full"
+          "w-full"
         )}
       >
-        {/* Header Section - Similar to Featured component */}
-        <div className="flex items-start gap-3 sm:gap-4">
-          {/* Logo/Favicon */}
-          <div className="relative flex-shrink-0">
-            <div
-              className={cn(
-                "w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 overflow-hidden",
-                "bg-background transition-all duration-200",
-                startup.isFeatured
-                  ? "border-orange-500/50 hover:border-orange-500 shadow-orange-500/20"
-                  : "border-border hover:border-muted-foreground/50"
-              )}
-            >
-              {startup.website ? (
-                <FaviconImage
-                  url={startup.website}
-                  alt={`${startup.name} favicon`}
-                  size={40}
-                  className="w-full h-full object-contain p-1"
-                  fallbackText={startup.name.substring(0, 2).toUpperCase()}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-medium">
-                  {startup.name.substring(0, 2).toUpperCase()}
+        <Link href={`/startups/${startup.slug}`} className="block">
+          <div className="flex items-center gap-4">
+            {/* Logo/Favicon */}
+            <div className="relative flex-shrink-0">
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-lg border overflow-hidden",
+                  "bg-background transition-all duration-200",
+                  startup.isFeatured
+                    ? "border-orange-500/50 shadow-orange-500/20"
+                    : "border-border"
+                )}
+              >
+                {startup.website ? (
+                  <FaviconImage
+                    url={startup.website}
+                    alt={`${startup.name} favicon`}
+                    size={40}
+                    className="w-full h-full object-contain p-1 rounded-lg"
+                    fallbackText={startup.name.substring(0, 2).toUpperCase()}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-xs font-medium">
+                    {startup.name.substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              {startup.isFeatured && (
+                <div className="absolute -top-1 -right-1">
+                  <IconStar className="h-3 w-3 fill-orange-500 text-orange-500" />
                 </div>
               )}
             </div>
-            {startup.isFeatured && (
-              <div className="absolute -top-1 -right-1">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <IconStar className="h-4 w-4 fill-orange-500 text-orange-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>Featured Startup</TooltipContent>
-                </Tooltip>
-              </div>
-            )}
-          </div>
 
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
-            {/* Name and Status */}
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="capitalize text-sm font-semibold text-foreground truncate">
-                {startup.name}
-              </h3>
-              <Badge variant="outline" className="text-xs capitalize">
-                {startup.status.replace("_", " ").toLowerCase()}
-              </Badge>
-            </div>
-
-            {/* Tagline */}
-            {startup.tagline && (
-              <p className="capitalize text-xs text-muted-foreground mb-2 line-clamp-1">
-                {startup.tagline}
-              </p>
-            )}
-
-            {/* Tag */}
-            {startup.tag && (
-              <div className="mb-2">
-                <Badge variant="secondary" className="text-xs">
-                  {startup.tag}
-                </Badge>
-              </div>
-            )}
-
-            {/* Key Metrics - Responsive Dashboard Style */}
-            <div className="flex items-center gap-2 sm:gap-4 text-xs flex-wrap">
-              {startup.revenue !== null && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex items-center gap-1 bg-green-50/80 dark:bg-green-950/20 px-2 py-1 rounded-md border border-green-200/50 dark:border-green-800/50">
-                      <IconTax className="h-3 w-3 text-green-500" />
-                      <span className="font-medium text-green-600 dark:text-green-400">
-                        {formatCurrency(startup.revenue)}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Monthly Revenue</TooltipContent>
-                </Tooltip>
-              )}
-
-              {startup.employees !== null && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex items-center gap-1 bg-blue-50/80 dark:bg-blue-950/20 px-2 py-1 rounded-md border border-blue-200/50 dark:border-blue-800/50">
-                      <IconUsers className="h-3 w-3 text-blue-500" />
-                      <span className="font-medium text-blue-600 dark:text-blue-400">
-                        {formatNumber(startup.employees)}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Team Size</TooltipContent>
-                </Tooltip>
-              )}
-
-              {startup.funding !== null && startup.funding > 0 && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex items-center gap-1 bg-purple-50/80 dark:bg-purple-950/20 px-2 py-1 rounded-md border border-purple-200/50 dark:border-purple-800/50">
-                      <IconRocket className="h-3 w-3 text-purple-500" />
-                      <span className="font-medium text-purple-600 dark:text-purple-400">
-                        {formatCurrency(startup.funding)}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Total Funding</TooltipContent>
-                </Tooltip>
-              )}
-
-              {startup._count.milestones > 0 && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex items-center gap-1 bg-orange-50/80 dark:bg-orange-950/20 px-2 py-1 rounded-md border border-orange-200/50 dark:border-orange-800/50">
-                      <IconTarget className="h-3 w-3 text-orange-500" />
-                      <span className="font-medium text-orange-600 dark:text-orange-400">
-                        {startup._count.milestones}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Milestones Achieved</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-1">
-            {isOwner && (
-              <>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowEditForm(true)}
-                      className="h-7 w-7 p-0 opacity-0 group-hover/startup:opacity-100 transition-opacity"
-                    >
-                      <IconEdit className="h-3 w-3" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit Startup</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowDeleteDialog(true)}
-                      className="h-7 w-7 p-0 text-destructive hover:text-destructive opacity-0 group-hover/startup:opacity-100 transition-opacity"
-                    >
-                      <IconTrash className="h-3 w-3" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete Startup</TooltipContent>
-                </Tooltip>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Expanded Details - Minimal Version */}
-        <div className="space-y-2">
-          {/* Description */}
-          {startup.description && (
-            <p className="capitalize text-xs text-muted-foreground leading-relaxed line-clamp-2">
-              {startup.description}
-            </p>
-          )}
-
-          {/* Tech Stack Indicators */}
-          {startup.techStack.length > 0 && (
-            <div className="flex items-center gap-1 flex-wrap">
-              {startup.techStack.slice(0, 3).map((tech) => (
-                <Badge
-                  key={tech}
-                  variant="secondary"
-                  className="text-xs h-5 px-2"
-                >
-                  {tech}
-                </Badge>
-              ))}
-              {startup.techStack.length > 3 && (
-                <span className="capitalize text-xs text-muted-foreground">
-                  +{startup.techStack.length - 3}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Progress Indicators */}
-          <div className="space-y-1">
-            {/* Stage Progress */}
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1">
-                <IconFlame className="h-3 w-3 text-orange-400" />
-                <span className="capitalize text-muted-foreground">Stage:</span>
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              {/* Name and Status */}
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="capitalize text-sm font-semibold text-foreground truncate">
+                  {startup.name}
+                </h3>
                 <Badge
                   variant="outline"
-                  className="text-xs h-5 px-2 capitalize"
+                  className="text-xs capitalize h-5 px-2"
                 >
-                  {startup.stage.replace("_", " ").toLowerCase()}
+                  {startup.status.replace("_", " ").toLowerCase()}
                 </Badge>
               </div>
-              {startup.foundedAt && (
-                <span className="text-muted-foreground">
-                  {new Date(startup.foundedAt).getFullYear()}
-                </span>
+
+              {/* Tagline */}
+              {startup.tagline && (
+                <p className="capitalize text-xs text-muted-foreground mb-2 line-clamp-1">
+                  {startup.tagline}
+                </p>
               )}
+
+              {/* Key Metrics and Info Row */}
+              <div className="flex items-center gap-3 text-xs flex-wrap">
+                {/* Metrics */}
+                {startup.revenue !== null && (
+                  <div className="flex items-center gap-1 bg-green-50/80 dark:bg-green-950/20 px-2 py-1 rounded border border-green-200/50 dark:border-green-800/50">
+                    <IconTax className="h-3 w-3 text-green-500" />
+                    <span className="font-medium text-green-600 dark:text-green-400">
+                      {formatCurrency(startup.revenue)}
+                    </span>
+                  </div>
+                )}
+
+                {startup.employees !== null && (
+                  <div className="flex items-center gap-1 bg-blue-50/80 dark:bg-blue-950/20 px-2 py-1 rounded border border-blue-200/50 dark:border-blue-800/50">
+                    <IconUsers className="h-3 w-3 text-blue-500" />
+                    <span className="font-medium text-blue-600 dark:text-blue-400">
+                      {formatNumber(startup.employees)}
+                    </span>
+                  </div>
+                )}
+
+                {startup.funding !== null && startup.funding > 0 && (
+                  <div className="flex items-center gap-1 bg-purple-50/80 dark:bg-purple-950/20 px-2 py-1 rounded border border-purple-200/50 dark:border-purple-800/50">
+                    <IconRocket className="h-3 w-3 text-purple-500" />
+                    <span className="font-medium text-purple-600 dark:text-purple-400">
+                      {formatCurrency(startup.funding)}
+                    </span>
+                  </div>
+                )}
+
+                {startup._count.milestones > 0 && (
+                  <div className="flex items-center gap-1 bg-orange-50/80 dark:bg-orange-950/20 px-2 py-1 rounded border border-orange-200/50 dark:border-orange-800/50">
+                    <IconTarget className="h-3 w-3 text-orange-500" />
+                    <span className="font-medium text-orange-600 dark:text-orange-400">
+                      {startup._count.milestones}
+                    </span>
+                  </div>
+                )}
+
+                {/* Stage */}
+                <div className="flex items-center gap-1">
+                  <IconFlame className="h-3 w-3 text-orange-400" />
+                  <Badge
+                    variant="outline"
+                    className="text-xs h-5 px-2 capitalize"
+                  >
+                    {startup.stage.replace("_", " ").toLowerCase()}
+                  </Badge>
+                </div>
+
+                {/* Industry */}
+                {startup.industry && (
+                  <span className="text-muted-foreground">
+                    {startup.industry}
+                  </span>
+                )}
+
+                {/* Founded Year */}
+                {startup.foundedAt && (
+                  <span className="text-muted-foreground">
+                    {new Date(startup.foundedAt).getFullYear()}
+                  </span>
+                )}
+              </div>
             </div>
 
-            {/* Quick Links */}
-            <div className="flex items-center gap-3 text-xs">
-              {startup.website && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a
-                      href={startup.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-muted-foreground hover:text-blue-500 transition-colors"
-                    >
-                      <IconWorld className="h-3 w-3" />
-                      <span>Site</span>
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>Visit Website</TooltipContent>
-                </Tooltip>
-              )}
+            {/* Action Buttons and Hover Text */}
+            <div className="flex items-center gap-2">
+              {/* Hover Text */}
+              <div className="opacity-0 group-hover/startup:opacity-100 transition-opacity duration-200">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <span>View startup</span>
+                  <IconArrowRight className="h-3 w-3" />
+                </div>
+              </div>
 
-              {startup.githubRepo && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a
-                      href={startup.githubRepo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-muted-foreground hover:text-blue-500 transition-colors"
-                    >
-                      <IconGitBranch className="h-3 w-3" />
-                      <span>Code</span>
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>View Repository</TooltipContent>
-                </Tooltip>
-              )}
-
-              {startup.industry && (
-                <span className="text-muted-foreground">
-                  {startup.industry}
-                </span>
+              {/* Owner Action Buttons */}
+              {isOwner && (
+                <div className="flex gap-1 opacity-0 group-hover/startup:opacity-100 transition-opacity">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowEditForm(true);
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <IconEdit className="h-3 w-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit Startup</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowDeleteDialog(true);
+                        }}
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                      >
+                        <IconTrash className="h-3 w-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete Startup</TooltipContent>
+                  </Tooltip>
+                </div>
               )}
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Edit Form */}

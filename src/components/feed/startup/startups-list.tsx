@@ -10,11 +10,13 @@ import { StartupForm } from "./startup-form";
 interface StartupsListProps {
   initialStartups: StartupWithDetails[];
   isOwner?: boolean;
+  showCreateButton?: boolean;
 }
 
 export function StartupsList({
   initialStartups,
   isOwner = false,
+  showCreateButton = true,
 }: StartupsListProps) {
   const [startups, setStartups] =
     useState<StartupWithDetails[]>(initialStartups);
@@ -69,7 +71,7 @@ export function StartupsList({
               ? "Add your first startup to showcase your ventures!"
               : "This user hasn't added any startups yet."}
           </p>
-          {isOwner && (
+          {isOwner && showCreateButton && (
             <Button onClick={() => setShowCreateForm(true)}>
               <IconPlus className="w-4 h-4 mr-2" />
               Add Startup
@@ -92,7 +94,7 @@ export function StartupsList({
     <>
       <div className="space-y-4">
         {/* Add Button for Owner */}
-        {isOwner && (
+        {isOwner && showCreateButton && (
           <div className="flex justify-end">
             <Button onClick={() => setShowCreateForm(true)} size="sm">
               <IconPlus className="w-4 h-4 mr-2" />
