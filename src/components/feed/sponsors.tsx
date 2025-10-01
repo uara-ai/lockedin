@@ -216,9 +216,9 @@ export function Sponsors() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <div className="text-center">
-                        <p className="font-medium capitalize">{displayName}</p>
+                        <p className="font-medium">{displayName}</p>
                         {sponsor.startupTagline && (
-                          <p className="text-xs text-muted-foreground mb-1 capitalize">
+                          <p className="text-xs text-muted-foreground mb-1">
                             {sponsor.startupTagline}
                           </p>
                         )}
