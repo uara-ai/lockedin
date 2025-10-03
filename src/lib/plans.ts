@@ -67,7 +67,7 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
       "Lifetime access",
       "Direct link to your startup",
     ],
-    color: "bg-orange-500",
+    color: "bg-primary",
     icon: "Crown",
   },
   annual: {

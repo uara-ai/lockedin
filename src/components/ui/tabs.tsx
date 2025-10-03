@@ -47,9 +47,9 @@ function TabsTrigger({
         "hover:text-gray-900 dark:hover:text-gray-100",
         "focus-visible:outline-none",
         "disabled:pointer-events-none disabled:opacity-50",
-        "data-[state=active]:text-orange-500 dark:data-[state=active]:text-primary",
+        "data-[state=active]:text-primary dark:data-[state=active]:text-primary",
         "data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0",
-        "data-[state=active]:after:h-0.5 data-[state=active]:after:bg-orange-500 dark:data-[state=active]:after:bg-orange-400",
+        "data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary dark:data-[state=active]:after:bg-primary",
         "[&_svg]:size-4 [&_svg]:shrink-0",
         className
       )}

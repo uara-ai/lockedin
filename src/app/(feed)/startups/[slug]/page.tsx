@@ -72,14 +72,14 @@ export default async function StartupPage({ params }: StartupPageProps) {
         </Link>
       </Button>
       <div className="mb-4 space-y-2">
-        <div className="font-mono text-xs mb-1 text-orange-500">Startup</div>
+        <div className="font-mono text-xs mb-1 text-primary">Startup</div>
         <div className="flex items-start gap-4">
           {/* Logo */}
           <div className="flex-shrink-0">
             <div
               className={`w-16 h-16 rounded-xl border overflow-hidden ${
                 startup.isFeatured
-                  ? "border-orange-500/50 shadow-orange-500/20"
+                  ? "border-primary/50 shadow-primary/20"
                   : "border-border"
               }`}
             >
@@ -106,7 +106,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
                 {startup.name}
               </h1>
               {startup.isFeatured && (
-                <Badge className="bg-orange-500 text-white text-xs">
+                <Badge className="bg-primary text-white text-xs">
                   Featured
                 </Badge>
               )}
@@ -138,7 +138,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
 
       {/* Key Metrics */}
       <div className="mb-4">
-        <div className="font-mono text-xs mb-1 text-orange-500">Metrics</div>
+        <div className="font-mono text-xs mb-1 text-primary">Metrics</div>
         <div className="flex items-center gap-2 text-xs flex-wrap">
           {startup.revenue !== null && (
             <div className="flex items-center gap-1 bg-green-50/80 dark:bg-green-950/20 px-2 py-1 rounded-md border border-green-200/50 dark:border-green-800/50">
@@ -168,9 +168,9 @@ export default async function StartupPage({ params }: StartupPageProps) {
           )}
 
           {startup._count.milestones > 0 && (
-            <div className="flex items-center gap-1 bg-orange-50/80 dark:bg-orange-950/20 px-2 py-1 rounded-md border border-orange-200/50 dark:border-orange-800/50">
-              <IconTarget className="h-3 w-3 text-orange-500" />
-              <span className="font-medium text-orange-600 dark:text-orange-400">
+            <div className="flex items-center gap-1 bg-primary/50/80 dark:bg-primary-950/20 px-2 py-1 rounded-md border border-primary-200/50 dark:border-primary-800/50">
+              <IconTarget className="h-3 w-3 text-primary" />
+              <span className="font-medium text-primary dark:text-primary">
                 {startup._count.milestones}
               </span>
             </div>
@@ -180,7 +180,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
 
       {startup.description && (
         <div className="mb-4">
-          <div className="font-mono text-xs mb-1 text-orange-500">About</div>
+          <div className="font-mono text-xs mb-1 text-primary">About</div>
           <pre className="bg-muted rounded p-3 text-xs whitespace-pre-wrap">
             {startup.description}
           </pre>
@@ -190,9 +190,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
       {/* Tech Stack */}
       {startup.techStack.length > 0 && (
         <div className="mb-4">
-          <div className="font-mono text-xs mb-1 text-orange-500">
-            Tech Stack
-          </div>
+          <div className="font-mono text-xs mb-1 text-primary">Tech Stack</div>
           <div className="flex flex-wrap gap-2">
             {startup.techStack.map((tech) => (
               <Badge key={tech} className="text-xs">
@@ -207,7 +205,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Company Details */}
         <div className="mb-4">
-          <div className="font-mono text-xs mb-1 text-orange-500">Details</div>
+          <div className="font-mono text-xs mb-1 text-primary">Details</div>
           <div className="space-y-2 text-xs">
             {startup.foundedAt && (
               <div className="flex items-center gap-2">
@@ -234,7 +232,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
                   Founder:{" "}
                   <Link
                     href={`/${startup.user.username}`}
-                    className="underline hover:text-orange-500 flex items-center gap-2"
+                    className="underline hover:text-primary flex items-center gap-2"
                   >
                     <Avatar className="size-5">
                       <AvatarImage
@@ -263,7 +261,7 @@ export default async function StartupPage({ params }: StartupPageProps) {
 
         {/* Links */}
         <div className="mb-4">
-          <div className="font-mono text-xs mb-1 text-orange-500">Links</div>
+          <div className="font-mono text-xs mb-1 text-primary">Links</div>
           <div className="space-y-2 text-xs">
             {startup.website && (
               <a

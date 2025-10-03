@@ -61,7 +61,7 @@ export const HeroHeader = () => {
                     >
                       <span className="flex items-center gap-2">
                         {item.name === "Startups" && (
-                          <div className="size-2 rounded-full bg-orange-500 animate-pulse" />
+                          <div className="size-2 rounded-full bg-primary animate-pulse" />
                         )}
                         {item.name}
                       </span>
@@ -83,7 +83,7 @@ export const HeroHeader = () => {
                         <span className="flex items-center gap-2">
                           {item.name}
                           {item.name === "Builders" && (
-                            <div className="size-2 rounded-full bg-orange-500 animate-pulse" />
+                            <div className="size-2 rounded-full bg-primary animate-pulse" />
                           )}
                         </span>
                       </Link>

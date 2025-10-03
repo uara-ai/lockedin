@@ -44,7 +44,7 @@ async function StartupsPageContent() {
     return (
       <div className="w-full space-y-4">
         <div className="mb-4">
-          <div className="font-mono text-xs mb-1 text-orange-500">Startups</div>
+          <div className="font-mono text-xs mb-1 text-primary">Startups</div>
           <div className="text-center py-12">
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-foreground">
@@ -66,13 +66,12 @@ async function StartupsPageContent() {
   return (
     <div className="w-full space-y-4">
       <div className="mb-4">
-        <div className="font-mono text-xs mb-1 text-orange-500">
+        <div className="font-mono text-xs mb-1 text-primary">
           Startups ({total})
         </div>
         <div className="text-sm text-muted-foreground mb-4">
-          Discover{" "}
-          <span className="text-orange-500 font-semibold">{total}</span> public
-          startups building the future
+          Discover <span className="text-primary font-semibold">{total}</span>{" "}
+          public startups building the future
         </div>
       </div>
 
