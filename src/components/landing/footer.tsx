@@ -1,7 +1,7 @@
 import { Logo } from "@/components/logo";
 import { IconBrandX } from "@tabler/icons-react";
 import Link from "next/link";
-import { GithubStars } from "../github-stars";
+import { ThemeSwitcher } from "../theme-switcher";
 
 const links = [
   {
@@ -15,10 +15,6 @@ const links = [
   {
     title: "Pricing",
     href: "#pricing",
-  },
-  {
-    title: "Examples",
-    href: "/examples",
   },
   {
     title: "Stay updated",
@@ -59,11 +55,11 @@ export default function FooterSection() {
           >
             <IconBrandX className="size-6" />
           </Link>
-          <GithubStars className="size-6" />
         </div>
-        <span className="text-muted-foreground block text-center text-sm">
+        <span className="text-muted-foreground text-center text-sm flex flex-col items-center justify-center gap-2">
           {" "}
-          © {new Date().getFullYear()} LockedIn, All rights reserved
+          © {new Date().getFullYear()} Uara.co, All rights reserved
+          <ThemeSwitcher />
         </span>
       </div>
     </footer>

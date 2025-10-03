@@ -129,7 +129,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
@@ -140,7 +140,9 @@ export default function RootLayout({
             disabled={process.env.NODE_ENV !== "production"}
           />
           <AuthKitProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <NuqsAdapter>
+              <main>{children}</main>
+            </NuqsAdapter>
             <Impersonation />
           </AuthKitProvider>
           <Toaster />

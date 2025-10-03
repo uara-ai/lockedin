@@ -5,14 +5,12 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { IconLock } from "@tabler/icons-react";
+import { IconLock, IconPointer } from "@tabler/icons-react";
 
 const menuItems = [
+  { name: "Feed", href: "/feed" },
   { name: "Founders", href: "/founders" },
   { name: "Startups", href: "/startups" },
-  { name: "Feed", href: "/feed" },
-  { name: "Features", href: "#features" },
-  { name: "Pricing", href: "#pricing" },
 ];
 
 export const HeroHeader = () => {
@@ -30,7 +28,7 @@ export const HeroHeader = () => {
     <header>
       <nav
         data-state={menuState && "active"}
-        className="fixed z-20 w-full px-2"
+        className="fixed z-20 w-full px-2 max-w-4xl mx-auto"
       >
         <div
           className={cn(
@@ -103,7 +101,7 @@ export const HeroHeader = () => {
                   <Link href="/login">
                     <span className="flex items-center gap-2">
                       <IconLock className="size-4" />
-                      Lock in
+                      Log in
                     </span>
                   </Link>
                 </Button>
@@ -114,7 +112,10 @@ export const HeroHeader = () => {
                   className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
                 >
                   <Link href="/login">
-                    <span>Get Started</span>
+                    <span className="flex items-center gap-2">
+                      <IconPointer className="size-4" />
+                      Create Profile
+                    </span>
                   </Link>
                 </Button>
               </div>

@@ -56,15 +56,14 @@ function BuildersLoading() {
 
 export default function Home() {
   return (
-    <>
+    <div className="max-w-4xl mx-auto">
       <HeroSection />
       <Suspense fallback={<BuildersLoading />}>
         <Builders />
       </Suspense>
       <FeaturesSection />
-      <WallOfLoveSection />
       <Pricing />
       <FooterSection />
-    </>
+    </div>
   );
 }
