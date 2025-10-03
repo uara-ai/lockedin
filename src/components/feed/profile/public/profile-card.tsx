@@ -178,7 +178,7 @@ export function ProfileCard({
             {profile.verified ? (
               <Tooltip>
                 <TooltipTrigger>
-                  <IconRosetteDiscountCheck className="size-5 fill-blue-500" />
+                  <IconRosetteDiscountCheck className="size-5 fill-blue-500 text-white" />
                 </TooltipTrigger>
                 <TooltipContent>Verified</TooltipContent>
               </Tooltip>

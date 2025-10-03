@@ -3,8 +3,10 @@ import { Check, Flame } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { IconLock, IconPointer } from "@tabler/icons-react";
+import { PROFILE_PLANS } from "@/lib/plans";
 
 export default function Pricing() {
+  const plan = PROFILE_PLANS.launch;
   return (
     <div className="relative py-16 md:py-32" id="pricing">
       <div className="mx-auto max-w-5xl px-6">
@@ -24,13 +26,13 @@ export default function Pricing() {
                   For your future success
                 </h3>
                 <div className="mb-6 mt-12 flex items-center justify-center gap-3">
-                  <span className="text-6xl font-bold">$12</span>
+                  <span className="text-6xl font-bold">${plan.price}</span>
                   <div className="flex flex-col">
                     <span className="text-2xl font-semibold text-muted-foreground line-through">
-                      $49
+                      ${plan.originalPrice}
                     </span>
                     <Badge variant="destructive" className="text-xs">
-                      75% OFF
+                      {plan.discount}% OFF
                     </Badge>
                   </div>
                 </div>
@@ -49,8 +51,8 @@ export default function Pricing() {
                         <IconPointer className="size-4" />
                         Create Profile{" "}
                         <Badge variant="destructive">
-                          <Flame className="size-4 fill-white animate-pulse" />
-                          $12
+                          <Flame className="size-4 fill-white animate-pulse" />$
+                          {plan.price}
                         </Badge>
                       </span>
                     </Link>

@@ -12,6 +12,20 @@ export interface SponsorPlan {
   icon: string;
 }
 
+export interface ProfilePlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  type: string;
+  trialDays: number;
+  polarProductId: string;
+  discount: number;
+  discountCode: string;
+  originalPrice: number;
+}
+
 export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
   monthly: {
     id: "monthly",
@@ -77,6 +91,25 @@ export const SPONSOR_PLANS: Record<string, SponsorPlan> = {
     ],
     color: "bg-indigo-500",
     icon: "Zap",
+  },
+};
+
+export const PROFILE_PLANS: Record<string, ProfilePlan> = {
+  launch: {
+    id: "lifetime",
+    name: "Launch deal",
+    description: "Lifetime access to all features",
+    price: 12,
+    discount: 75,
+    discountCode: "LAUNCH",
+    originalPrice: 49,
+    currency: "USD",
+    type: "lifetime",
+    trialDays: 0,
+    polarProductId:
+      process.env.NODE_ENV === "development"
+        ? "95c62088-bd93-4cb3-9bb9-4556240d0273"
+        : "4207dcfa-3828-4c18-b270-a6acbf054d00", // Production code
   },
 };
 

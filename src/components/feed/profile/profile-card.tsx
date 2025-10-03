@@ -67,7 +67,7 @@ export function ProfileCard({ profile, className }: ProfileCardProps) {
             {profile.verified ? (
               <Tooltip>
                 <TooltipTrigger>
-                  <IconRosetteDiscountCheck className="size-5 fill-blue-500" />
+                  <IconRosetteDiscountCheck className="size-5 fill-blue-500 text-white" />
                 </TooltipTrigger>
                 <TooltipContent>Verified</TooltipContent>
               </Tooltip>
@@ -130,7 +130,7 @@ export function ProfileCard({ profile, className }: ProfileCardProps) {
           {profile.currentStreak > 0 && (
             <div className="flex items-center gap-2">
               <Flame className="size-4 text-orange-500 fill-orange-500" />
-              <span>{profile.currentStreak} days</span>
+              <span>{profile.currentStreak}d</span>
             </div>
           )}
           {/* Social Links */}
@@ -158,10 +158,6 @@ export function ProfileCard({ profile, className }: ProfileCardProps) {
               )}
             </div>
           )}
-          <div className="flex items-center gap-2 ml-auto">
-            <Calendar className="size-4" />
-            <span>Joined {formatJoinDate(profile.joinedAt)}</span>
-          </div>
         </div>
 
         {/* Stats */}
