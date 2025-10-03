@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Be_Vietnam_Pro,
+  Inter,
+  Baumans,
+  Instrument_Serif,
+} from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { OpenPanelComponent } from "@openpanel/nextjs";
@@ -9,6 +16,7 @@ import {
   Impersonation,
 } from "@workos-inc/authkit-nextjs/components";
 import { Toaster } from "sonner";
+import { DATA } from "@/lib/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,12 +28,93 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  preload: true,
+  weight: "variable",
+  display: "swap",
+});
+
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin"],
+  variable: "--font-be-vietnam-pro",
+  preload: true,
+  display: "swap",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const baumans = Baumans({
+  subsets: ["latin"],
+  variable: "--font-baumans",
+  preload: true,
+  display: "swap",
+  weight: ["400"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
+  preload: true,
+  display: "swap",
+  weight: ["400"],
+});
+
 export const metadata: Metadata = {
-  title: "Lockedin",
-  description: "Open-Source LinkedIn alternative for people who ship",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
-  ),
+  metadataBase: new URL(DATA.url),
+  title: {
+    default: DATA.meta.home.title,
+    template: `%s | ${DATA.name}`,
+  },
+  description: DATA.meta.home.description,
+  keywords: DATA.keywords.join(", "),
+  authors: [{ name: "Federico Fan", url: DATA.url }],
+  creator: "Federico Fan",
+  publisher: DATA.name,
+  applicationName: DATA.name,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: DATA.url,
+    siteName: DATA.name,
+    title: DATA.meta.home.title,
+    description: DATA.meta.home.description,
+    images: [
+      {
+        url: DATA.meta.home.ogImage,
+        width: 1200,
+        height: 630,
+        alt: DATA.meta.home.title,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DATA.meta.home.title,
+    description: DATA.meta.home.description,
+    images: [DATA.meta.home.ogImage],
+    creator: "@FedericoFan",
+    site: "@FedericoFan",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: DATA.url,
+  },
+  verification: {
+    google: "",
+    yandex: "",
+  },
+  category: "Technology",
 };
 
 export default function RootLayout({
@@ -36,7 +125,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${beVietnamPro.variable} ${baumans.variable} ${inter.variable} ${instrumentSerif.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
