@@ -24,13 +24,13 @@ export default function Pricing() {
                   For your future success
                 </h3>
                 <div className="mb-6 mt-12 flex items-center justify-center gap-3">
-                  <span className="text-6xl font-bold">$19</span>
+                  <span className="text-6xl font-bold">$12</span>
                   <div className="flex flex-col">
                     <span className="text-2xl font-semibold text-muted-foreground line-through">
                       $49
                     </span>
                     <Badge variant="destructive" className="text-xs">
-                      61% OFF
+                      75% OFF
                     </Badge>
                   </div>
                 </div>
@@ -50,7 +50,7 @@ export default function Pricing() {
                         Create Profile{" "}
                         <Badge variant="destructive">
                           <Flame className="size-4 fill-white animate-pulse" />
-                          $19
+                          $12
                         </Badge>
                       </span>
                     </Link>
