@@ -80,13 +80,13 @@ const SponsorLogo = ({
 const getTierStyling = (planType: string) => {
   switch (planType) {
     case "LIFETIME":
-      return "border-purple-500/50 hover:border-purple-500 shadow-purple-500/20";
+      return "border-border hover:border-primary shadow-primary/20";
     case "MONTHLY":
-      return "border-blue-500/50 hover:border-blue-500 shadow-blue-500/20";
+      return "border-border hover:border-primary shadow-primary/20";
     case "ANNUAL":
-      return "border-green-500/50 hover:border-green-500 shadow-green-500/20";
+      return "border-border hover:border-primary shadow-primary/20";
     default:
-      return "border-border hover:border-muted-foreground/50";
+      return "border-border hover:border-primary shadow-primary/20";
   }
 };
 

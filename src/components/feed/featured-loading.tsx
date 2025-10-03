@@ -66,8 +66,8 @@ export function FeaturedLoading() {
             <div
               className={cn(
                 "flex items-center justify-center gap-2 p-2 rounded-lg",
-                "border-2 border-dashed border-orange-500/30",
-                "text-sm text-orange-600 dark:text-orange-400 transition-all duration-200",
+                "border-2 border-dashed border-primary/30",
+                "text-sm text-primary dark:text-primary transition-all duration-200",
                 "font-medium"
               )}
             >

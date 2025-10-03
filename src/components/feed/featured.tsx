@@ -152,13 +152,13 @@ export function Featured() {
           <div className="group/featured p-3 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Flame className="h-4 w-4 text-orange-500" />
+                <Flame className="h-4 w-4 text-primary" />
                 <h2 className="text-sm font-semibold text-foreground">
                   Founders
                 </h2>
               </div>
               {totalCount !== null && (
-                <span className="text-xs text-orange-500">
+                <span className="text-xs text-primary font-semibold">
                   {totalCount} total
                 </span>
               )}
@@ -197,13 +197,13 @@ export function Featured() {
         <div className="group/featured p-3 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-500" />
+              <Flame className="h-4 w-4 text-primary" />
               <h2 className="text-sm font-semibold text-foreground">
                 Founders
               </h2>
             </div>
             {totalCount !== null && (
-              <span className="text-xs text-orange-500">
+              <span className="text-xs text-primary font-semibold">
                 {totalCount} total
               </span>
             )}
@@ -252,19 +252,12 @@ export function Featured() {
                       {profile.name}
                     </span>
                     {profile.verified && (
-                      <IconRosetteDiscountCheck className="h-3 w-3 fill-blue-500 flex-shrink-0" />
+                      <IconRosetteDiscountCheck className="h-3 w-3 fill-blue-500 flex-shrink-0 text-white" />
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="truncate">@{profile.username}</span>
                   </div>
-                </div>
-
-                <div className="text-right">
-                  <div className="text-xs font-medium text-blue-600">
-                    {formatStreak(profile.currentStreak)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">streak</div>
                 </div>
               </Link>
             ))}
@@ -296,9 +289,9 @@ export function Featured() {
               href="/feed/new"
               className={cn(
                 "flex items-center justify-center gap-2 p-2 rounded-lg",
-                "border-2 border-dashed border-orange-500/30",
-                "hover:border-orange-500/50 hover:bg-orange-50/30 dark:hover:bg-orange-950/30",
-                "text-sm text-orange-600 dark:text-orange-400 transition-all duration-200",
+                "border-2 border-dashed border-primary/30",
+                "hover:border-primary/50 hover:bg-primary/30 dark:hover:bg-primary-950/30",
+                "text-sm text-primary dark:text-primary transition-all duration-200",
                 "font-medium"
               )}
             >

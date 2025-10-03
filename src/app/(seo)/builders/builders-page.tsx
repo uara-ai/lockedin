@@ -46,16 +46,16 @@ export default async function BuildersPageContent() {
 
               <div className="flex items-center gap-2 sm:mr-20">
                 <span className="text-sm text-muted-foreground">
-                  <span className="text-orange-500 text-lg font-bold">
+                  <span className="text-primary text-lg font-bold">
                     {builders?.length}
                   </span>{" "}
                   builders joined
                 </span>
                 <div className="flex flex-col items-center gap-2">
-                  <IconCornerRightUp className="size-8 text-orange-500 hidden md:block" />
+                  <IconCornerRightUp className="size-8 text-primary hidden md:block" />
                   <Link
                     href="/login"
-                    className="text-orange-500 font-semibold sm:hidden"
+                    className="text-primary font-semibold sm:hidden"
                   >
                     Join now
                   </Link>

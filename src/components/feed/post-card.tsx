@@ -256,16 +256,29 @@ export function PostCard({
               {post.author.verified && (
                 <Tooltip>
                   <TooltipTrigger>
-                    <IconRosetteDiscountCheck className="size-4 fill-blue-500" />
+                    <IconRosetteDiscountCheck className="size-4 fill-blue-500 text-white" />
                   </TooltipTrigger>
                   <TooltipContent>Verified</TooltipContent>
                 </Tooltip>
               )}
               <span className="text-muted-foreground">•</span>
               <span className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(post.createdAt), {
-                  addSuffix: true,
-                })}
+                {(() => {
+                  const diffMs =
+                    Date.now() - new Date(post.createdAt).getTime();
+                  const diffSec = Math.floor(diffMs / 1000);
+                  const diffMin = Math.floor(diffSec / 60);
+                  const diffHr = Math.floor(diffMin / 60);
+                  const diffDay = Math.floor(diffHr / 24);
+
+                  if (diffDay >= 1) {
+                    return `${diffDay}d`;
+                  }
+                  if (diffHr >= 1) {
+                    return `${diffHr}h`;
+                  }
+                  return `${diffMin}m`;
+                })()}
               </span>
             </div>
 
