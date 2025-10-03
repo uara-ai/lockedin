@@ -1,27 +1,27 @@
-"use client";
+import { withAuth } from "@workos-inc/authkit-nextjs";
+import { redirect } from "next/navigation";
+import { getUserProfile } from "@/app/data/profile";
+import { NewPostClient } from "./new-post-client";
 
-import { CreatePost } from "@/components/feed/create-post";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+export default async function NewPostPage() {
+  // Ensure user is authenticated
+  const { user } = await withAuth({ ensureSignedIn: true });
 
-export default function NewPostPage() {
-  const router = useRouter();
+  if (!user) {
+    redirect("/login");
+  }
 
-  // Handle new post creation
-  const handlePostCreated = () => {
-    toast.success("Post created successfully!");
-    // Redirect to main feed
-    router.push("/feed");
-  };
+  // Check if user has set their username
+  const profileResponse = await getUserProfile();
 
-  return (
-    <div className="w-full px-2">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-6">
-          Create New Post
-        </h1>
-        <CreatePost onPostCreated={handlePostCreated} />
-      </div>
-    </div>
-  );
+  if (
+    !profileResponse.success ||
+    !profileResponse.data ||
+    !profileResponse.data.username
+  ) {
+    // Redirect to profile edit if username is not set
+    redirect("/profile/edit?create=true");
+  }
+
+  return <NewPostClient />;
 }
