@@ -14,10 +14,27 @@ export interface PostWithDetails {
   id: string;
   content: string;
   type: PostType;
+
+  // Commitment-specific fields
+  goal: string | null;
+  deadline: Date | null;
+  stakeAmount: number | null;
+  stakeCurrency: string | null;
+  stakeDescription: string | null;
+  stakeRecipient: string | null;
+  progressPercentage: number | null;
+  progressNotes: string | null;
+  isCompleted: boolean;
+  isFailed: boolean;
+  completedAt: Date | null;
+  failedAt: Date | null;
+
+  // Legacy fields (for backward compatibility)
   revenueAmount: number | null;
   currency: string | null;
   commitsCount: number | null;
   repoUrl: string | null;
+
   viewsCount: number;
   sharesCount: number;
   createdAt: Date;
@@ -59,7 +76,16 @@ export interface PostComment {
 // Validation schemas
 const createPostSchema = z.object({
   content: z.string().min(1).max(2000),
-  type: z.nativeEnum(PostType).default(PostType.UPDATE),
+  type: z.nativeEnum(PostType).default(PostType.COMMITMENT),
+  goal: z.string().min(1).max(200).optional(),
+  deadline: z.date().optional(),
+  stakeAmount: z.number().positive().optional(),
+  stakeCurrency: z.string().length(3).optional(),
+  stakeDescription: z.string().min(1).max(200).optional(),
+  stakeRecipient: z.string().min(1).max(100).optional(),
+  progressPercentage: z.number().min(0).max(100).optional(),
+  progressNotes: z.string().max(1000).optional(),
+  // Legacy fields
   revenueAmount: z.number().positive().optional(),
   currency: z.string().length(3).optional(),
   commitsCount: z.number().min(0).optional(),
@@ -83,6 +109,41 @@ const commentSchema = z.object({
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type UpdatePostInput = z.infer<typeof updatePostSchema>;
 export type CreateCommentInput = z.infer<typeof commentSchema>;
+
+// Helper function to map database post to PostWithDetails
+function mapPostToDetails(post: any): PostWithDetails {
+  return {
+    id: post.id,
+    content: post.content,
+    type: post.type,
+    // Commitment fields
+    goal: post.goal,
+    deadline: post.deadline,
+    stakeAmount: post.stakeAmount ? Number(post.stakeAmount) : null,
+    stakeCurrency: post.stakeCurrency,
+    stakeDescription: post.stakeDescription,
+    stakeRecipient: post.stakeRecipient,
+    progressPercentage: post.progressPercentage,
+    progressNotes: post.progressNotes,
+    isCompleted: post.isCompleted,
+    isFailed: post.isFailed,
+    completedAt: post.completedAt,
+    failedAt: post.failedAt,
+    // Legacy fields
+    revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
+    currency: post.currency,
+    commitsCount: post.commitsCount,
+    repoUrl: post.repoUrl,
+    viewsCount: post.viewsCount,
+    sharesCount: post.sharesCount,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+    author: post.author,
+    _count: post._count,
+    tags: post.tags,
+    isLiked: post.likes?.length > 0 || false,
+  };
+}
 
 /**
  * Create a new post
@@ -122,6 +183,15 @@ export async function createPost(
         data: {
           content: validatedData.content,
           type: validatedData.type,
+          goal: validatedData.goal,
+          deadline: validatedData.deadline,
+          stakeAmount: validatedData.stakeAmount,
+          stakeCurrency: validatedData.stakeCurrency,
+          stakeDescription: validatedData.stakeDescription,
+          stakeRecipient: validatedData.stakeRecipient,
+          progressPercentage: validatedData.progressPercentage,
+          progressNotes: validatedData.progressNotes,
+          // Legacy fields
           revenueAmount: validatedData.revenueAmount,
           currency: validatedData.currency,
           commitsCount: validatedData.commitsCount,
@@ -221,25 +291,7 @@ export async function createPost(
       };
     }
 
-    const postWithDetails: PostWithDetails = {
-      id: completePost.id,
-      content: completePost.content,
-      type: completePost.type,
-      revenueAmount: completePost.revenueAmount
-        ? Number(completePost.revenueAmount)
-        : null,
-      currency: completePost.currency,
-      commitsCount: completePost.commitsCount,
-      repoUrl: completePost.repoUrl,
-      viewsCount: completePost.viewsCount,
-      sharesCount: completePost.sharesCount,
-      createdAt: completePost.createdAt,
-      updatedAt: completePost.updatedAt,
-      author: completePost.author,
-      _count: completePost._count,
-      tags: completePost.tags,
-      isLiked: false, // New post, not liked yet
-    };
+    const postWithDetails = mapPostToDetails(completePost);
 
     return {
       success: true,
@@ -321,23 +373,7 @@ export async function getPosts(
       skip: offset,
     });
 
-    const postsWithDetails: PostWithDetails[] = posts.map((post) => ({
-      id: post.id,
-      content: post.content,
-      type: post.type,
-      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
-      currency: post.currency,
-      commitsCount: post.commitsCount,
-      repoUrl: post.repoUrl,
-      viewsCount: post.viewsCount,
-      sharesCount: post.sharesCount,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: post.author,
-      _count: post._count,
-      tags: post.tags,
-      isLiked: currentUserId ? (post as any).likes?.length > 0 : false,
-    }));
+    const postsWithDetails: PostWithDetails[] = posts.map(mapPostToDetails);
 
     return {
       success: true,
@@ -418,23 +454,10 @@ export async function getPost(
       data: { viewsCount: { increment: 1 } },
     });
 
-    const postWithDetails: PostWithDetails = {
-      id: post.id,
-      content: post.content,
-      type: post.type,
-      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
-      currency: post.currency,
-      commitsCount: post.commitsCount,
-      repoUrl: post.repoUrl,
+    const postWithDetails = mapPostToDetails({
+      ...post,
       viewsCount: post.viewsCount + 1, // Include the increment
-      sharesCount: post.sharesCount,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: post.author,
-      _count: post._count,
-      tags: post.tags,
-      isLiked: currentUserId ? (post as any).likes?.length > 0 : false,
-    };
+    });
 
     return {
       success: true,
@@ -590,25 +613,7 @@ export async function updatePost(
       };
     }
 
-    const postWithDetails: PostWithDetails = {
-      id: completeUpdatedPost.id,
-      content: completeUpdatedPost.content,
-      type: completeUpdatedPost.type,
-      revenueAmount: completeUpdatedPost.revenueAmount
-        ? Number(completeUpdatedPost.revenueAmount)
-        : null,
-      currency: completeUpdatedPost.currency,
-      commitsCount: completeUpdatedPost.commitsCount,
-      repoUrl: completeUpdatedPost.repoUrl,
-      viewsCount: completeUpdatedPost.viewsCount,
-      sharesCount: completeUpdatedPost.sharesCount,
-      createdAt: completeUpdatedPost.createdAt,
-      updatedAt: completeUpdatedPost.updatedAt,
-      author: completeUpdatedPost.author,
-      _count: completeUpdatedPost._count,
-      tags: completeUpdatedPost.tags,
-      isLiked: false, // Will be set by client if needed
-    };
+    const postWithDetails = mapPostToDetails(completeUpdatedPost);
 
     return {
       success: true,
@@ -1011,23 +1016,7 @@ export async function getPostsByTag(
       skip: offset,
     });
 
-    const postsWithDetails: PostWithDetails[] = posts.map((post) => ({
-      id: post.id,
-      content: post.content,
-      type: post.type,
-      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
-      currency: post.currency,
-      commitsCount: post.commitsCount,
-      repoUrl: post.repoUrl,
-      viewsCount: post.viewsCount,
-      sharesCount: post.sharesCount,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: post.author,
-      _count: post._count,
-      tags: post.tags,
-      isLiked: currentUserId ? (post as any).likes?.length > 0 : false,
-    }));
+    const postsWithDetails: PostWithDetails[] = posts.map(mapPostToDetails);
 
     return {
       success: true,
@@ -1126,23 +1115,7 @@ export async function getPostsByUser(
       },
     });
 
-    const postsWithDetails: PostWithDetails[] = posts.map((post: any) => ({
-      id: post.id,
-      content: post.content,
-      type: post.type,
-      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
-      currency: post.currency,
-      commitsCount: post.commitsCount,
-      repoUrl: post.repoUrl,
-      viewsCount: post.viewsCount,
-      sharesCount: post.sharesCount,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: post.author,
-      _count: post._count,
-      tags: post.tags,
-      isLiked: false, // Will be checked separately if needed
-    }));
+    const postsWithDetails: PostWithDetails[] = posts.map(mapPostToDetails);
 
     return {
       success: true,
@@ -1212,23 +1185,7 @@ export async function getPostsByUsername(
       },
     });
 
-    const postsWithDetails: PostWithDetails[] = posts.map((post: any) => ({
-      id: post.id,
-      content: post.content,
-      type: post.type,
-      revenueAmount: post.revenueAmount ? Number(post.revenueAmount) : null,
-      currency: post.currency,
-      commitsCount: post.commitsCount,
-      repoUrl: post.repoUrl,
-      viewsCount: post.viewsCount,
-      sharesCount: post.sharesCount,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: post.author,
-      _count: post._count,
-      tags: post.tags,
-      isLiked: currentUserId ? post.likes?.length > 0 : false,
-    }));
+    const postsWithDetails: PostWithDetails[] = posts.map(mapPostToDetails);
 
     return {
       success: true,

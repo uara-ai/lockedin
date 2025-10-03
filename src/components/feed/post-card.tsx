@@ -39,6 +39,12 @@ import {
   ExternalLink,
   Loader2,
   Trash2,
+  Calendar,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Clock,
+  X,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
@@ -57,41 +63,29 @@ import { IconRosetteDiscountCheck } from "@tabler/icons-react";
 
 // Post type configurations
 const postTypeConfig = {
-  [PostType.UPDATE]: {
-    icon: MessageSquare,
-    label: "Update",
-    color: "text-blue-500",
-    bgColor: "bg-blue-50 dark:bg-blue-950",
+  [PostType.COMMITMENT]: {
+    icon: Target,
+    label: "Commitment",
+    color: "text-red-500",
+    bgColor: "bg-red-50 dark:bg-red-950",
   },
-  [PostType.REVENUE]: {
-    icon: DollarSign,
-    label: "Revenue",
-    color: "text-green-500",
-    bgColor: "bg-green-50 dark:bg-green-950",
-  },
-  [PostType.ACHIEVEMENT]: {
-    icon: Trophy,
-    label: "Achievement",
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-50 dark:bg-yellow-950",
-  },
-  [PostType.STREAK]: {
+  [PostType.PROGRESS]: {
     icon: Flame,
-    label: "Streak",
+    label: "Progress",
     color: "text-orange-500",
     bgColor: "bg-orange-50 dark:bg-orange-950",
   },
-  [PostType.GITHUB]: {
-    icon: GitCommit,
-    label: "Code",
-    color: "text-purple-500",
-    bgColor: "bg-purple-50 dark:bg-purple-950",
+  [PostType.COMPLETION]: {
+    icon: Trophy,
+    label: "Completed",
+    color: "text-green-500",
+    bgColor: "bg-green-50 dark:bg-green-950",
   },
-  [PostType.MILESTONE]: {
-    icon: Target,
-    label: "Milestone",
-    color: "text-indigo-500",
-    bgColor: "bg-indigo-50 dark:bg-indigo-950",
+  [PostType.FAILURE]: {
+    icon: X,
+    label: "Failed",
+    color: "text-red-600",
+    bgColor: "bg-red-100 dark:bg-red-900",
   },
 };
 
@@ -331,36 +325,139 @@ export function PostCard({
             {post.content}
           </p>
 
-          {/* Type-specific content */}
-          {post.type === PostType.REVENUE && post.revenueAmount && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950 rounded-lg">
-              <DollarSign className="size-5 text-green-500" />
-              <span className="font-semibold text-green-700 dark:text-green-300">
-                {formatCurrency(post.revenueAmount, post.currency || "USD")}{" "}
-                revenue milestone
-              </span>
+          {/* Commitment-specific content */}
+          {post.type === PostType.COMMITMENT && (
+            <div className="space-y-4">
+              {/* Goal */}
+              <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="size-5 text-red-500" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">
+                    Goal
+                  </span>
+                </div>
+                <p className="text-red-800 dark:text-red-200 font-medium">
+                  {post.goal}
+                </p>
+              </div>
+
+              {/* Deadline and Stake */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Deadline */}
+                {post.deadline && (
+                  <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950 rounded-lg">
+                    <Calendar className="size-4 text-orange-500" />
+                    <div>
+                      <p className="text-xs text-orange-600 dark:text-orange-400">
+                        Deadline
+                      </p>
+                      <p className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                        {new Date(post.deadline).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Stake */}
+                {post.stakeAmount && (
+                  <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                    <AlertTriangle className="size-4 text-yellow-500" />
+                    <div>
+                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                        Stake
+                      </p>
+                      <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                        {formatCurrency(
+                          post.stakeAmount,
+                          post.stakeCurrency || "USD"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Stake Details */}
+              {post.stakeDescription && (
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    If I fail:
+                  </p>
+                  <p className="text-sm text-gray-800 dark:text-gray-200">
+                    {post.stakeDescription}
+                  </p>
+                  {post.stakeRecipient && (
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                      Stake recipient: {post.stakeRecipient}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
-          {post.type === PostType.GITHUB && (
-            <div className="space-y-2">
-              {post.commitsCount && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <GitCommit className="size-4" />
-                  <span>{post.commitsCount} commits</span>
+          {/* Progress Update */}
+          {post.type === PostType.PROGRESS && (
+            <div className="p-4 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
+              <div className="flex items-center gap-2 mb-2">
+                <Flame className="size-5 text-orange-500" />
+                <span className="font-semibold text-orange-700 dark:text-orange-300">
+                  Progress Update
+                </span>
+              </div>
+              {post.progressPercentage !== undefined && (
+                <div className="mb-2">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-orange-600 dark:text-orange-400">
+                      Progress
+                    </span>
+                    <span className="text-orange-800 dark:text-orange-200 font-medium">
+                      {post.progressPercentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-orange-200 dark:bg-orange-800 rounded-full h-2">
+                    <div
+                      className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${post.progressPercentage}%` }}
+                    />
+                  </div>
                 </div>
               )}
-              {post.repoUrl && (
-                <Link
-                  href={post.repoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-sm text-blue-500 hover:underline"
-                >
-                  <ExternalLink className="size-4" />
-                  View Repository
-                </Link>
+              {post.progressNotes && (
+                <p className="text-orange-800 dark:text-orange-200 text-sm">
+                  {post.progressNotes}
+                </p>
               )}
+            </div>
+          )}
+
+          {/* Completion */}
+          {post.type === PostType.COMPLETION && (
+            <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="size-5 text-green-500" />
+                <span className="font-semibold text-green-700 dark:text-green-300">
+                  Commitment Completed!
+                </span>
+              </div>
+              <p className="text-green-800 dark:text-green-200 text-sm">
+                🎉 Congratulations on achieving your goal!
+              </p>
+            </div>
+          )}
+
+          {/* Failure */}
+          {post.type === PostType.FAILURE && (
+            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="flex items-center gap-2 mb-2">
+                <XCircle className="size-5 text-red-500" />
+                <span className="font-semibold text-red-700 dark:text-red-300">
+                  Commitment Failed
+                </span>
+              </div>
+              <p className="text-red-800 dark:text-red-200 text-sm">
+                The stake has been activated. Better luck next time!
+              </p>
             </div>
           )}
 

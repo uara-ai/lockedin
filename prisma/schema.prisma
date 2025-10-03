@@ -64,13 +64,31 @@ model Post {
   updatedAt DateTime @updatedAt
 
   // Post types for different accountability content
-  type PostType @default(UPDATE)
+  type PostType @default(COMMITMENT)
 
-  // Revenue/achievement related data
+  // Commitment-specific fields
+  goal             String? // What they're committing to achieve
+  deadline         DateTime? // When they need to complete it
+  stakeAmount      Decimal? // Financial stake amount
+  stakeCurrency    String? // Currency for the stake
+  stakeDescription String? // Description of what happens if they fail
+  stakeRecipient   String? // Who gets the stake if they fail (username/email)
+
+  // Progress tracking
+  progressPercentage Int?    @default(0) // 0-100 progress
+  progressNotes      String? // Notes about current progress
+
+  // Commitment status
+  isCompleted Boolean   @default(false)
+  isFailed    Boolean   @default(false)
+  completedAt DateTime?
+  failedAt    DateTime?
+
+  // Revenue/achievement related data (legacy support)
   revenueAmount Decimal?
   currency      String?
 
-  // GitHub related data
+  // GitHub related data (legacy support)
   commitsCount Int?
   repoUrl      String?
 
@@ -88,12 +106,10 @@ model Post {
 }
 
 enum PostType {
-  UPDATE // General update
-  REVENUE // Revenue milestone
-  ACHIEVEMENT // Achievement unlock
-  STREAK // Streak milestone
-  GITHUB // Code contribution
-  MILESTONE // General milestone
+  COMMITMENT // Public commitment with goal, deadline, and stake
+  PROGRESS // Progress update on existing commitment
+  COMPLETION // Commitment completed successfully
+  FAILURE // Commitment failed - stake activated
 }
 
 // Post tagging system
