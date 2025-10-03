@@ -1,3 +1,5 @@
+"use client";
+
 import { PROFILE_PLANS } from "@/lib/plans";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,9 +8,40 @@ import { Flame } from "lucide-react";
 import { IconLock } from "@tabler/icons-react";
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { useState } from "react";
 
 export function PaymentBanner() {
   const plan = PROFILE_PLANS.launch;
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCreateProfile = async () => {
+    setIsLoading(true);
+
+    try {
+      // Redirect to Polar checkout with profile plan and discount code
+      const checkoutUrl = `/api/checkout?products=${
+        plan.polarProductId
+      }&customerEmail=${encodeURIComponent(
+        user?.email || ""
+      )}&discountCode=${encodeURIComponent(
+        plan.discountCode
+      )}&metadata=${encodeURIComponent(
+        JSON.stringify({
+          planType: plan.type,
+          planId: plan.id,
+          planName: plan.name,
+        })
+      )}`;
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error("Error redirecting to checkout:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <div className="bg-card relative rounded-3xl border shadow-2xl shadow-zinc-950/5">
@@ -31,20 +64,19 @@ export function PaymentBanner() {
               className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5 flex justify-center"
             >
               <Button
-                asChild
+                onClick={handleCreateProfile}
+                disabled={isLoading}
                 size="lg"
                 className="rounded-xl px-5 text-base w-full"
               >
-                <Link href="/login">
-                  <span className="text-nowrap flex items-center gap-2">
-                    <IconPointer className="size-4" />
-                    Create Profile{" "}
-                    <Badge variant="destructive">
-                      <Flame className="size-4 fill-white animate-pulse" />$
-                      {plan.price}
-                    </Badge>
-                  </span>
-                </Link>
+                <span className="text-nowrap flex items-center gap-2">
+                  <IconPointer className="size-4" />
+                  {isLoading ? "Processing..." : "Create Profile"}{" "}
+                  <Badge variant="destructive">
+                    <Flame className="size-4 fill-white animate-pulse" />$
+                    {plan.price}
+                  </Badge>
+                </span>
               </Button>
             </div>
 

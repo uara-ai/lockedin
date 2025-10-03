@@ -108,8 +108,8 @@ export const PROFILE_PLANS: Record<string, ProfilePlan> = {
     trialDays: 0,
     polarProductId:
       process.env.NODE_ENV === "development"
-        ? "95c62088-bd93-4cb3-9bb9-4556240d0273"
-        : "4207dcfa-3828-4c18-b270-a6acbf054d00", // Production code
+        ? "419f5e94-56c2-4018-8146-685756981882"
+        : "08129582-e05c-4724-9fca-0f678ff87b7b", // Production code
   },
 };
 

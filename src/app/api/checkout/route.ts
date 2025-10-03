@@ -9,6 +9,7 @@ customerId (optional) ?products=123&customerId=xxx
 customerExternalId (optional) ?products=123&customerExternalId=xxx
 customerEmail (optional) ?products=123&customerEmail=janedoe@gmail.com
 customerName (optional) ?products=123&customerName=Jane
+discountCode (optional) ?products=123&discountCode=LAUNCH
 metadata (optional) URL-Encoded JSON string
 */
 import { Checkout } from "@polar-sh/nextjs";
