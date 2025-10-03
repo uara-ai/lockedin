@@ -77,7 +77,7 @@ export async function Builders() {
                       {builder.name || builder.username}
                     </span>
                     {builder.verified && (
-                      <IconRosetteDiscountCheck className="h-4 w-4 fill-blue-500 flex-shrink-0" />
+                      <IconRosetteDiscountCheck className="h-4 w-4 fill-blue-500 flex-shrink-0 text-white" />
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground truncate">

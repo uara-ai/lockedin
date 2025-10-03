@@ -2,6 +2,7 @@ import { Logo } from "@/components/logo";
 import { IconBrandX } from "@tabler/icons-react";
 import Link from "next/link";
 import { ThemeSwitcher } from "../theme-switcher";
+import Dr from "../dr";
 
 const links = [
   {
@@ -57,8 +58,7 @@ export default function FooterSection() {
           </Link>
         </div>
         <span className="text-muted-foreground text-center text-sm flex flex-col items-center justify-center gap-2">
-          {" "}
-          © {new Date().getFullYear()} Uara.co, All rights reserved
+          <Dr /> © {new Date().getFullYear()} Uara.co, All rights reserved
           <ThemeSwitcher />
         </span>
       </div>

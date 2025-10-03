@@ -6,6 +6,7 @@ import { Builders } from "@/components/landing/builders";
 import FooterSection from "@/components/landing/footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import WallOfLoveSection from "@/components/landing/testimonials";
+import Dr from "@/components/dr";
 
 // Loading component for builders section
 function BuildersLoading() {
