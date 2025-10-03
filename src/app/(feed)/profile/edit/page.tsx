@@ -88,7 +88,7 @@ export default async function ProfileEditPage({
               Complete Your Profile
             </h1>
             <p className="text-muted-foreground">
-              Set up your LockedIn profile to get started
+              Set up your Uara profile to get started
             </p>
           </div>
         </div>

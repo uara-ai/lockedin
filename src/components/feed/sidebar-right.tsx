@@ -47,7 +47,7 @@ export function SidebarRight({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                lockedin v0.0.1
+                uara v0.0.1
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

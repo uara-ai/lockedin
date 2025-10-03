@@ -103,17 +103,17 @@ export async function generateMetadata() {
       : 0;
 
   return {
-    title: `Startups - LockedIn`,
-    description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on LockedIn.`,
+    title: `Startups - Uara`,
+    description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
     openGraph: {
-      title: `Startups - LockedIn`,
-      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on LockedIn.`,
+      title: `Startups - Uara`,
+      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
       type: "website",
     },
     images: [
       {
         url: `${
-          process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
+          process.env.NEXT_PUBLIC_APP_URL || "https://uara.co"
         }/lockedin.png`,
         width: 1200,
         height: 630,
@@ -121,12 +121,10 @@ export async function generateMetadata() {
     ],
     twitter: {
       card: "summary_large_image",
-      title: `Startups - LockedIn`,
-      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on LockedIn.`,
+      title: `Startups - Uara`,
+      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
     },
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_APP_URL || "https://lockedin.bio"
-    ),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://uara.co"),
     robots: {
       index: true,
       follow: true,

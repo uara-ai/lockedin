@@ -163,7 +163,7 @@ export function ProfileEditForm({
         if (response.success) {
           toast.success(
             isCreating
-              ? "Profile created successfully! Welcome to LockedIn!"
+              ? "Profile created successfully! Welcome to Uara!"
               : "Profile updated successfully!"
           );
           router.push("/profile");
@@ -261,7 +261,7 @@ export function ProfileEditForm({
                     </div>
                     <FormDescription>
                       {isCreating
-                        ? "Choose a unique username. This will be your public profile URL (e.g., lockedin.com/johndoe)."
+                        ? "Choose a unique username. This will be your public profile URL (e.g., Uara.com/johndoe)."
                         : "Your unique username. This will be part of your public profile URL."}
                     </FormDescription>
                     {usernameAvailable === false && (
@@ -307,7 +307,7 @@ export function ProfileEditForm({
                   </FormControl>
                   <FormDescription>
                     {isCreating
-                      ? "Tell the LockedIn community about yourself and what you're building. This helps others discover and connect with you."
+                      ? "Tell the Uara community about yourself and what you're building. This helps others discover and connect with you."
                       : "A brief description about yourself. This will be visible on your public profile."}
                   </FormDescription>
                   <FormMessage />

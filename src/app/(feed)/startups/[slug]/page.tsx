@@ -329,13 +329,13 @@ export async function generateMetadata({ params }: StartupPageProps) {
   const startup = startupResponse.data;
 
   return {
-    title: `${startup.name} - LockedIn`,
+    title: `${startup.name} - Uara`,
     description:
       startup.tagline ||
       startup.description ||
       `Learn more about ${startup.name}`,
     openGraph: {
-      title: `${startup.name} - LockedIn`,
+      title: `${startup.name} - Uara`,
       description:
         startup.tagline ||
         startup.description ||

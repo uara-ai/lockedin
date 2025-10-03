@@ -130,23 +130,19 @@ export async function generateMetadata({ params }: UserProfilePageProps) {
 
   if (!profileResponse.success || !profileResponse.data) {
     return {
-      title: "Profile Not Found | LockedIn",
+      title: "Profile Not Found | Uara",
     };
   }
 
   const profile = profileResponse.data;
 
   return {
-    title: `${profile.name || profile.username} (@${
-      profile.username
-    }) | LockedIn`,
+    title: `${profile.name || profile.username} (@${profile.username}) | Uara`,
     description:
       profile.bio ||
-      `Check out ${
-        profile.name || profile.username
-      }'s builder journey on LockedIn`,
+      `Check out ${profile.name || profile.username}'s builder journey on Uara`,
     openGraph: {
-      title: `${profile.name || profile.username} on LockedIn`,
+      title: `${profile.name || profile.username} on Uara`,
       description:
         profile.bio ||
         `Building consistently with ${profile.currentStreak} day streak`,
@@ -154,7 +150,7 @@ export async function generateMetadata({ params }: UserProfilePageProps) {
     },
     twitter: {
       card: "summary",
-      title: `${profile.name || profile.username} on LockedIn`,
+      title: `${profile.name || profile.username} on Uara`,
       description: profile.bio || `🔥 ${profile.currentStreak} day streak`,
       images: profile.avatar ? [profile.avatar] : [],
     },

@@ -37,9 +37,9 @@ export function PaymentBanner() {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Error redirecting to checkout:", error);
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Reset loading state on error
     }
+    // Note: We don't reset loading state on success since we're redirecting
   };
 
   return (

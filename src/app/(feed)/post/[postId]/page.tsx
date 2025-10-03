@@ -67,7 +67,7 @@ export async function generateMetadata({
 
   if (!postResponse.success || !postResponse.data) {
     return {
-      title: "Post Not Found | LockedIn",
+      title: "Post Not Found | Uara",
     };
   }
 
@@ -78,7 +78,7 @@ export async function generateMetadata({
       : post.content;
 
   return {
-    title: `${post.author.name || post.author.username} on LockedIn`,
+    title: `${post.author.name || post.author.username} on Uara`,
     description: truncatedContent,
     openGraph: {
       title: `${
@@ -89,7 +89,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary",
-      title: `${post.author.name || post.author.username} on LockedIn`,
+      title: `${post.author.name || post.author.username} on Uara`,
       description: truncatedContent,
       images: post.author.avatar ? [post.author.avatar] : [],
     },

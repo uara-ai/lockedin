@@ -4,13 +4,13 @@ import BuildersPageContent from "./builders-page";
 export const revalidate = 86400; // 24 hours
 
 export const metadata = {
-  title: "All Builders | LockedIn",
+  title: "All Builders | Uara",
   description:
-    "Meet the builders, makers, and founders shipping on LockedIn. Join the community of people building in public.",
+    "Meet the builders, makers, and founders shipping on Uara. Join the community of people building in public.",
   openGraph: {
-    title: "All Builders | LockedIn",
+    title: "All Builders | Uara",
     description:
-      "Meet the builders, makers, and founders shipping on LockedIn. Join the community of people building in public.",
+      "Meet the builders, makers, and founders shipping on Uara. Join the community of people building in public.",
   },
 };
 

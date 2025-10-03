@@ -60,8 +60,9 @@ export const POST = Webhooks({
       const planType = metadata.planType || "monthly";
       const planId = metadata.planId || "monthly";
       const startupId = metadata.startupId;
+      const planName = metadata.planName;
 
-      console.log("Metadata:", { planType, planId, startupId });
+      console.log("Metadata:", { planType, planId, startupId, planName });
 
       // Find or create user by email
       let user = await prisma.user.findUnique({
@@ -83,52 +84,78 @@ export const POST = Webhooks({
         console.log("User created:", user.id);
       }
 
-      // Create sponsor subscription
-      console.log("Creating sponsor subscription...");
-      const sponsorSubscription = await prisma.sponsorSubscription.create({
-        data: {
-          userId: user.id,
-          startupId: (startupId as string) || null,
-          polarCustomerId: customer.id,
-          polarOrderId: order.id,
-          planType: (planType as string).toUpperCase() as
-            | "MONTHLY"
-            | "ANNUAL"
-            | "LIFETIME",
-          status: "ACTIVE",
-          amount: order.fromBalanceAmount || 0,
-          currency: order.currency || "USD",
-          billingInterval:
-            planType === "lifetime"
-              ? "lifetime"
-              : planType === "monthly"
-              ? "month"
-              : "year",
-          nextBillingDate:
-            planType === "lifetime"
-              ? null
-              : new Date(
-                  Date.now() +
-                    (planType === "monthly" ? 30 : 365) * 24 * 60 * 60 * 1000
-                ),
-          isFeatured: true,
-          priorityOrder: 0,
-          customBadge:
-            planType === "lifetime"
-              ? "Lifetime Sponsor"
-              : planType === "monthly"
-              ? "Monthly Sponsor"
-              : "Annual Sponsor",
-        },
-      });
+      // Check if this is a profile plan payment
+      const isProfilePlan =
+        planName === "Launch deal" || (planType === "lifetime" && !startupId);
 
-      console.log("✅ Sponsor subscription created successfully:", {
-        id: sponsorSubscription.id,
-        userId: sponsorSubscription.userId,
-        startupId: sponsorSubscription.startupId,
-        planType: sponsorSubscription.planType,
-        status: sponsorSubscription.status,
-      });
+      if (isProfilePlan) {
+        console.log(
+          "Profile plan payment detected, updating user verification status..."
+        );
+
+        // Update user's verified status to true
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { verified: true },
+        });
+
+        console.log(
+          "✅ User verification status updated to true for profile plan payment"
+        );
+      }
+
+      // Create sponsor subscription only if it's NOT a profile plan payment
+      if (!isProfilePlan) {
+        console.log("Creating sponsor subscription...");
+        const sponsorSubscription = await prisma.sponsorSubscription.create({
+          data: {
+            userId: user.id,
+            startupId: (startupId as string) || null,
+            polarCustomerId: customer.id,
+            polarOrderId: order.id,
+            planType: (planType as string).toUpperCase() as
+              | "MONTHLY"
+              | "ANNUAL"
+              | "LIFETIME",
+            status: "ACTIVE",
+            amount: order.fromBalanceAmount || 0,
+            currency: order.currency || "USD",
+            billingInterval:
+              planType === "lifetime"
+                ? "lifetime"
+                : planType === "monthly"
+                ? "month"
+                : "year",
+            nextBillingDate:
+              planType === "lifetime"
+                ? null
+                : new Date(
+                    Date.now() +
+                      (planType === "monthly" ? 30 : 365) * 24 * 60 * 60 * 1000
+                  ),
+            isFeatured: true,
+            priorityOrder: 0,
+            customBadge:
+              planType === "lifetime"
+                ? "Lifetime Sponsor"
+                : planType === "monthly"
+                ? "Monthly Sponsor"
+                : "Annual Sponsor",
+          },
+        });
+
+        console.log("✅ Sponsor subscription created successfully:", {
+          id: sponsorSubscription.id,
+          userId: sponsorSubscription.userId,
+          startupId: sponsorSubscription.startupId,
+          planType: sponsorSubscription.planType,
+          status: sponsorSubscription.status,
+        });
+      } else {
+        console.log(
+          "Profile plan payment - skipping sponsor subscription creation"
+        );
+      }
     } catch (error) {
       console.error("❌ Error processing order paid webhook:", error);
       console.error("Error details:", {

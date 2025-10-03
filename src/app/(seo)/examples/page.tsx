@@ -2,7 +2,7 @@ import { ContributionExamples } from "@/components/feed/activity/contribution-ex
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contribution Chart Examples | LockedIn",
+  title: "Contribution Chart Examples | Uara",
   description:
     "Explore different contribution chart variations and color schemes for tracking your development activity.",
 };

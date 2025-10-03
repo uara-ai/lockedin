@@ -40,7 +40,7 @@ export default async function BuildersPageContent() {
                   All Builders
                 </h1>
                 <p className="text-muted-foreground">
-                  Meet the builders, makers, and founders shipping on LockedIn
+                  Meet the builders, makers, and founders shipping on Uara
                 </p>
               </div>
 
@@ -299,7 +299,7 @@ function BuildersEmptyState() {
       </div>
       <h3 className="text-lg font-semibold mb-2">No builders found</h3>
       <p className="text-muted-foreground mb-6">
-        Be the first to join the LockedIn community
+        Be the first to join the Uara community
       </p>
       <Button asChild>
         <Link href="/apply">
