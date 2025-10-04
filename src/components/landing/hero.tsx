@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { HeroHeader } from "@/components/landing/header";
 import { UsernameClaim } from "./username-claim";
+import WhyCommodo from "../why-commodo";
 
 export default function HeroSection() {
   return (
@@ -46,6 +47,9 @@ export default function HeroSection() {
                 <UsernameClaim />
               </div>
             </div>
+          </div>
+          <div className="mt-12">
+            <WhyCommodo />
           </div>
         </section>
       </main>

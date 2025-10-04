@@ -1,9 +1,7 @@
 import { AnimatedGroup } from "../ui/animated-group";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Badge } from "../ui/badge";
-import { Flame } from "lucide-react";
-import { GithubStars } from "../github-stars";
+import { IconComponents } from "@tabler/icons-react";
 
 const transitionVariants = {
   item: {
@@ -46,13 +44,10 @@ export default function SmallCTA() {
         className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"
       >
         <Button asChild size="lg" className="rounded-xl px-5 text-base">
-          <Link href="/login">
+          <Link href="/feed">
             <span className="text-nowrap flex items-center gap-2">
-              Join early{" "}
-              <Badge variant="info">
-                <Flame className="size-4 fill-white animate-pulse" />
-                FREE
-              </Badge>
+              <IconComponents className="size-4 mr-2" />
+              Explore Commodo
             </span>
           </Link>
         </Button>

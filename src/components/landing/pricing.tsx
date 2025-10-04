@@ -26,7 +26,7 @@ export default function Pricing() {
                   For your future success
                 </h3>
                 <div className="mb-6 mt-12 flex items-center justify-center gap-3">
-                  <span className="text-6xl font-bold">${plan.price}</span>
+                  <span className="text-6xl font-bold">FREE</span>
                   <div className="flex flex-col">
                     <span className="text-2xl font-semibold text-muted-foreground line-through">
                       ${plan.originalPrice}
@@ -52,7 +52,7 @@ export default function Pricing() {
                         Create Profile{" "}
                         <Badge variant="destructive">
                           <Flame className="size-4 fill-white animate-pulse" />$
-                          {plan.price}
+                          FREE
                         </Badge>
                       </span>
                     </Link>

@@ -5,9 +5,9 @@ import SmallCTA from "@/components/landing/cta";
 
 export default function SEOLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="max-w-4xl mx-auto">
       <HeroHeader />
-      <main className="py-24">{children}</main>
+      <main>{children}</main>
       <Builders />
       <SmallCTA />
       <FooterSection />

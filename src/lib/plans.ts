@@ -100,7 +100,7 @@ export const PROFILE_PLANS: Record<string, ProfilePlan> = {
     name: "Launch deal",
     description: "Lifetime access to all features",
     price: 12,
-    discount: 75,
+    discount: 100,
     discountCode: "LAUNCH",
     originalPrice: 49,
     currency: "USD",
