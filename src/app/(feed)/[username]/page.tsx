@@ -126,19 +126,23 @@ export async function generateMetadata({ params }: UserProfilePageProps) {
 
   if (!profileResponse.success || !profileResponse.data) {
     return {
-      title: "Profile Not Found | Uara",
+      title: "Profile Not Found | Commodo",
     };
   }
 
   const profile = profileResponse.data;
 
   return {
-    title: `${profile.name || profile.username} (@${profile.username}) | Uara`,
+    title: `${profile.name || profile.username} (@${
+      profile.username
+    }) | Commodo`,
     description:
       profile.bio ||
-      `Check out ${profile.name || profile.username}'s builder journey on Uara`,
+      `Check out ${
+        profile.name || profile.username
+      }'s builder journey on Commodo`,
     openGraph: {
-      title: `${profile.name || profile.username} on Uara`,
+      title: `${profile.name || profile.username} on Commodo`,
       description:
         profile.bio ||
         `Building consistently with ${profile.currentStreak} day streak`,
@@ -146,7 +150,7 @@ export async function generateMetadata({ params }: UserProfilePageProps) {
     },
     twitter: {
       card: "summary",
-      title: `${profile.name || profile.username} on Uara`,
+      title: `${profile.name || profile.username} on Commodo`,
       description: profile.bio || `🔥 ${profile.currentStreak} day streak`,
       images: profile.avatar ? [profile.avatar] : [],
     },

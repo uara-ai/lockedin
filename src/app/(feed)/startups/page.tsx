@@ -102,17 +102,17 @@ export async function generateMetadata() {
       : 0;
 
   return {
-    title: `Startups - Uara`,
-    description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
+    title: `Startups - Commodo`,
+    description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Commodo.`,
     openGraph: {
-      title: `Startups - Uara`,
-      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
+      title: `Startups - Commodo`,
+      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Commodo.`,
       type: "website",
     },
     images: [
       {
         url: `${
-          process.env.NEXT_PUBLIC_APP_URL || "https://uara.co"
+          process.env.NEXT_PUBLIC_APP_URL || "https://commodo.io"
         }/lockedin.png`,
         width: 1200,
         height: 630,
@@ -120,10 +120,12 @@ export async function generateMetadata() {
     ],
     twitter: {
       card: "summary_large_image",
-      title: `Startups - Uara`,
-      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Uara.`,
+      title: `Startups - Commodo`,
+      description: `Discover ${total} public startups building the future. Explore innovative companies, founders, and their journey on Commodo.`,
     },
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://uara.co"),
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_APP_URL || "https://commodo.io"
+    ),
     robots: {
       index: true,
       follow: true,

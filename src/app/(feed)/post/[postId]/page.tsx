@@ -67,7 +67,7 @@ export async function generateMetadata({
 
   if (!postResponse.success || !postResponse.data) {
     return {
-      title: "Post Not Found | Uara",
+      title: "Post Not Found | Commodo",
     };
   }
 
@@ -78,7 +78,7 @@ export async function generateMetadata({
       : post.content;
 
   return {
-    title: `${post.author.name || post.author.username} on Uara`,
+    title: `${post.author.name || post.author.username} on Commodo`,
     description: truncatedContent,
     openGraph: {
       title: `${
@@ -89,7 +89,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary",
-      title: `${post.author.name || post.author.username} on Uara`,
+      title: `${post.author.name || post.author.username} on Commodo`,
       description: truncatedContent,
       images: post.author.avatar ? [post.author.avatar] : [],
     },

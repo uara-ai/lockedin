@@ -2,13 +2,13 @@ import { Twitter, Linkedin, Mail } from "lucide-react";
 
 export const DATA = {
   // Brand & positioning
-  name: "Uara.co - Proof of Work & Public Accountability Platform",
+  name: "Commodo.io - Proof of Work & Public Accountability Platform",
   initials: "UA",
-  url: "https://uara.co",
+  url: "https://commodo.io",
   location: "Remote • Europe (CET)",
   locationLink: "https://www.google.com/maps/place/Europe",
   description:
-    "Uara is where builders, founders, and professionals showcase proof of work, set public commitments, and build credibility through real achievements.",
+    "Commodo is where builders, founders, and professionals showcase proof of work, set public commitments, and build credibility through real achievements.",
   summary:
     "Showcase proof of work. Set public commitments. Build credibility with skin in the game.",
 
@@ -77,13 +77,14 @@ export const DATA = {
   // 🌐 Per-page SEO metadata (titles, descriptions, og)
   meta: {
     home: {
-      title: "Uara.co - Proof of Work & Public Accountability Platform",
+      title: "Commodo.io - Proof of Work & Public Accountability Platform",
       description:
         "Showcase proof of work. Set public commitments. Build credibility with skin in the game.",
       ogImage: "/og/opengraph-image.png",
     },
     pricing: {
-      title: "Pricing — Uara.co Proof of Work & Public Accountability Platform",
+      title:
+        "Pricing — Commodo.io Proof of Work & Public Accountability Platform",
       description: "Simple plans for proof of work and public accountability. ",
       ogImage: "/og/opengraph-image.png",
     },
@@ -94,20 +95,20 @@ export const DATA = {
     organization: {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Uara.co",
-      url: "https://uara.co",
-      logo: "https://uara.co/logo-uara.png",
+      name: "Commodo.io",
+      url: "https://commodo.io",
+      logo: "https://commodo.io/icon.png",
       sameAs: [
         "https://x.com/FedericoFan",
         "https://www.linkedin.com/in/federico-fanini/",
-        "https://uara.co",
+        "https://commodo.io",
       ],
     },
     // Represent the app itself
     app: {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: "Uara.co — Proof of Work & Public Accountability Platform",
+      name: "Commodo.io — Proof of Work & Public Accountability Platform",
       applicationCategory: "Accountability Application",
       operatingSystem: "Web",
       description:
@@ -118,9 +119,9 @@ export const DATA = {
         // Use a placeholder or bind to your actual plan later
         price: "0.00",
         availability: "https://schema.org/PreOrder",
-        url: "https://uara.co/",
+        url: "https://commodo.io/",
       },
-      publisher: { "@type": "Organization", name: "Uara.co" },
+      publisher: { "@type": "Organization", name: "Commodo.io" },
     },
   },
 } as const;

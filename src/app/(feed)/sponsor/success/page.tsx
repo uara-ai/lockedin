@@ -33,7 +33,7 @@ function SponsorSuccessContent() {
         checkoutId,
       });
       setIsLoading(false);
-      toast.success("Welcome to Uara! 🎉");
+      toast.success("Welcome to Commodo! 🎉");
     } else {
       setIsLoading(false);
       toast.error("Invalid payment confirmation");
@@ -112,7 +112,8 @@ function SponsorSuccessContent() {
           Payment Successful!
         </h1>
         <p className="text-muted-foreground">
-          Welcome to Uara Sponsors! Your {planName.toLowerCase()} has started.
+          Welcome to Commodo Sponsors! Your {planName.toLowerCase()} has
+          started.
         </p>
       </div>
 

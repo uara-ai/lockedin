@@ -47,7 +47,7 @@ export function SidebarRight({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                uara v0.0.1
+                commodo v0.0.1
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -52,7 +52,7 @@ const FeedbackCard = () => (
           <IconQuote className="h-4 w-4 text-muted-foreground/60" />
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Share your experience with Uara on{" "}
+          Share your experience with Commodo on{" "}
           <span className="font-semibold">𝕏</span> and tag{" "}
           <a
             href="https://x.com/locked_fed"
@@ -73,7 +73,7 @@ const FeedbackCard = () => (
         asChild
       >
         <a
-          href="https://x.com/intent/tweet?text=Just%20tried%Uara%20.bio%20-%20amazing%20platform%20for%20builders!%20%40locked_fed"
+          href="https://x.com/intent/tweet?text=Just%20tried%Commodo%20.bio%20-%20amazing%20platform%20for%20builders!%20%40locked_fed"
           target="_blank"
           rel="noopener noreferrer"
         >
