@@ -6,19 +6,19 @@ export const Logo = ({ className }: { className?: string }) => {
   return (
     <Link
       className={cn(
-        "flex items-center gap-2 font-bold text-xl font-baumans",
+        "flex items-center gap-2 font-bold text-xl font-baumans text-primary",
         className
       )}
       href="/"
     >
       <Image
-        src="/icon.svg"
-        alt="Uara"
+        src="/icon.png"
+        alt="Commodo"
         width={32}
         height={32}
         className="rounded-xl"
       />
-      Uara.co
+      commodo.io
     </Link>
   );
 };

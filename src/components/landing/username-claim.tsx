@@ -124,14 +124,14 @@ export function UsernameClaim() {
           {/* Brand prefix */}
           <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4">
             <Image
-              src="/icon.svg"
-              alt="Uara"
+              src="/icon.png"
+              alt="Commodo"
               width={32}
               height={32}
               className="rounded-xl"
             />
-            <span className="text-lg font-semibold text-foreground">
-              uara.co/
+            <span className="text-lg font-semibold text-primary">
+              commodo.io/
             </span>
           </div>
 
