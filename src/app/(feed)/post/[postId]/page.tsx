@@ -40,7 +40,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {/* Post Card */}
         <div className="mb-6">
-          <PostCard post={post} className="border rounded-lg p-6" />
+          <PostCard post={post} />
         </div>
 
         <Separator className="my-6" />

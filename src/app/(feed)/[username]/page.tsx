@@ -67,11 +67,7 @@ export default async function UserProfilePage({
             postsResponse.data &&
             postsResponse.data.length > 0 ? (
               postsResponse.data.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  className="border rounded-lg p-4"
-                />
+                <PostCard key={post.id} post={post} />
               ))
             ) : (
               <div className="text-center py-12">

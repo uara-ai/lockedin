@@ -45,6 +45,9 @@ import {
   XCircle,
   Clock,
   X,
+  AtSign,
+  Hash,
+  Command,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
@@ -60,6 +63,184 @@ import {
 import { PostComments } from "./post-comments";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { IconRosetteDiscountCheck } from "@tabler/icons-react";
+
+// Currency symbols to highlight
+const CURRENCY_SYMBOLS = [
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "CAD",
+  "AUD",
+  "CHF",
+  "CNY",
+  "INR",
+  "BRL",
+  "MXN",
+  "KRW",
+  "SGD",
+  "HKD",
+  "NZD",
+  "SEK",
+  "NOK",
+  "DKK",
+  "PLN",
+  "CZK",
+  "HUF",
+  "RUB",
+  "TRY",
+  "ZAR",
+  "BGN",
+  "RON",
+  "HRK",
+  "ISK",
+  "UAH",
+  "PHP",
+  "THB",
+  "MYR",
+  "IDR",
+  "VND",
+  "TWD",
+  "AED",
+  "SAR",
+  "QAR",
+  "KWD",
+  "BHD",
+  "OMR",
+  "JOD",
+  "LBP",
+  "EGP",
+  "MAD",
+  "TND",
+  "DZD",
+  "LYD",
+  "ETB",
+  "KES",
+  "UGX",
+  "TZS",
+  "ZMW",
+  "BWP",
+  "NAD",
+  "SZL",
+  "LSL",
+  "MUR",
+  "SCR",
+  "MVR",
+  "NPR",
+  "PKR",
+  "BDT",
+  "LSL",
+  "AFN",
+  "IRR",
+  "IQD",
+  "KZT",
+  "UZS",
+  "KGS",
+  "TJS",
+  "TMT",
+  "AZN",
+  "GEL",
+  "AMD",
+  "BYN",
+  "MDL",
+  "UAH",
+  "BGN",
+  "RSD",
+  "MKD",
+  "ALL",
+  "BAM",
+  "MNT",
+  "KHR",
+  "LAK",
+  "MMK",
+  "BTN",
+  "NPR",
+  "PKR",
+  "BDT",
+  "LSL",
+  "AFN",
+  "IRR",
+  "IQD",
+  "KZT",
+  "UZS",
+  "KGS",
+  "TJS",
+  "TMT",
+  "AZN",
+  "GEL",
+  "AMD",
+  "BYN",
+  "MDL",
+  "UAH",
+  "BGN",
+  "RSD",
+  "MKD",
+  "ALL",
+  "BAM",
+  "MNT",
+  "KHR",
+  "LAK",
+  "MMK",
+  "BTN",
+];
+
+// Text highlighting component for currencies, mentions, and hashtags
+function HighlightedText({ text }: { text: string }) {
+  const parts = [];
+  let lastIndex = 0;
+
+  // Regex to match currencies, @mentions, and #hashtags
+  const regex =
+    /(\$[A-Z]{3}|\b[A-Z]{3}\b|@\w+|#\w+|\$[0-9]+(?:,[0-9]{3})*(?:\.[0-9]{2})?|\€[0-9]+(?:,[0-9]{3})*(?:\.[0-9]{2})?|\$|\€)/g;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(
+        <span key={`text-${lastIndex}`}>
+          {text.slice(lastIndex, match.index)}
+        </span>
+      );
+    }
+
+    // Add the highlighted match
+    const matchText = match[0];
+    const isCurrency = CURRENCY_SYMBOLS.includes(matchText.replace("$", ""));
+    const isMention = matchText.startsWith("@");
+    const isHashtag = matchText.startsWith("#");
+    const isCurrencySymbol = matchText === "$" || matchText === "€";
+    const isCurrencyAmount =
+      /^\$[0-9]+(?:,[0-9]{3})*(?:\.[0-9]{2})?$/.test(matchText) ||
+      /^\€[0-9]+(?:,[0-9]{3})*(?:\.[0-9]{2})?$/.test(matchText);
+
+    parts.push(
+      <span
+        key={`highlight-${match.index}`}
+        className={cn(
+          "font-bold text-primary",
+          (isCurrency ||
+            isMention ||
+            isHashtag ||
+            isCurrencySymbol ||
+            isCurrencyAmount) &&
+            "bg-primary/10 px-1 rounded"
+        )}
+      >
+        {matchText}
+      </span>
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    parts.push(<span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>);
+  }
+
+  return <>{parts}</>;
+}
 
 // Post type configurations
 const postTypeConfig = {
@@ -216,47 +397,43 @@ export function PostCard({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="space-y-4">
+      {/* Clean Post Card */}
+      <div className="bg-background border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
         {/* Header */}
-        <div className="flex items-start gap-3">
-          <Link href={`/${post.author.username}`}>
-            <Avatar className="size-10 border-2 border-background cursor-pointer">
-              <AvatarImage
-                src={post.author.avatar || undefined}
-                alt={post.author.name || "User"}
-              />
-              <AvatarFallback>
-                {post.author.name
-                  ? post.author.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()
-                  : "U"}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
+        <div className="flex items-center justify-between p-3 border-b border-border/50">
+          <div className="flex items-center gap-2">
+            <Link href={`/${post.author.username}`}>
+              <Avatar className="size-6 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all">
+                <AvatarImage
+                  src={post.author.avatar || undefined}
+                  alt={post.author.name || "User"}
+                />
+                <AvatarFallback className="text-xs font-semibold">
+                  {post.author.name
+                    ? post.author.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+                    : "U"}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
               <Link
                 href={`/${post.author.username}`}
                 className="hover:underline"
               >
-                <span className="font-medium text-foreground">
+                <span className="font-semibold text-sm text-foreground">
                   {post.author.name || "Unknown User"}
                 </span>
               </Link>
               {post.author.verified && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <IconRosetteDiscountCheck className="size-4 fill-blue-500 text-white" />
-                  </TooltipTrigger>
-                  <TooltipContent>Verified</TooltipContent>
-                </Tooltip>
+                <IconRosetteDiscountCheck className="size-3 fill-blue-500 text-white" />
               )}
-              <span className="text-muted-foreground">•</span>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-xs">•</span>
+              <span className="text-xs text-muted-foreground">
                 {(() => {
                   const diffMs =
                     Date.now() - new Date(post.createdAt).getTime();
@@ -275,20 +452,6 @@ export function PostCard({
                 })()}
               </span>
             </div>
-
-            <div className="flex items-center gap-2 mt-1">
-              <div
-                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs ${config.bgColor}`}
-              >
-                <IconComponent className={`size-3 ${config.color}`} />
-                <span className={config.color}>{config.label}</span>
-              </div>
-              {post.author.username && (
-                <span className="text-xs text-muted-foreground">
-                  @{post.author.username}
-                </span>
-              )}
-            </div>
           </div>
 
           {/* Post actions menu (only for post author) */}
@@ -298,9 +461,9 @@ export function PostCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="size-8 p-0 text-muted-foreground hover:text-foreground"
+                  className="size-6 p-0 text-muted-foreground hover:text-foreground"
                 >
-                  <MoreHorizontal className="size-4" />
+                  <MoreHorizontal className="size-3" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -319,165 +482,15 @@ export function PostCard({
         {/* Content */}
         <Link
           href={`/post/${post.id}`}
-          className="block space-y-3 hover:bg-muted/30 rounded-lg -mx-2 px-2 py-1 transition-colors"
+          className="block p-4 hover:bg-muted/20 transition-colors"
         >
-          <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-            {post.content}
-          </p>
-
-          {/* Commitment-specific content */}
-          {post.type === PostType.COMMITMENT && (
-            <div className="space-y-4">
-              {/* Goal */}
-              <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-                <div className="flex items-center gap-2 mb-2">
-                  <Target className="size-5 text-red-500" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">
-                    Goal
-                  </span>
-                </div>
-                <p className="text-red-800 dark:text-red-200 font-medium">
-                  {post.goal}
-                </p>
-              </div>
-
-              {/* Deadline and Stake */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Deadline */}
-                {post.deadline && (
-                  <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950 rounded-lg">
-                    <Calendar className="size-4 text-orange-500" />
-                    <div>
-                      <p className="text-xs text-orange-600 dark:text-orange-400">
-                        Deadline
-                      </p>
-                      <p className="text-sm font-medium text-orange-800 dark:text-orange-200">
-                        {new Date(post.deadline).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Stake */}
-                {post.stakeAmount && (
-                  <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
-                    <AlertTriangle className="size-4 text-yellow-500" />
-                    <div>
-                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                        Stake
-                      </p>
-                      <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                        {formatCurrency(
-                          post.stakeAmount,
-                          post.stakeCurrency || "USD"
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Stake Details */}
-              {post.stakeDescription && (
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                    If I fail:
-                  </p>
-                  <p className="text-sm text-gray-800 dark:text-gray-200">
-                    {post.stakeDescription}
-                  </p>
-                  {post.stakeRecipient && (
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                      Stake recipient: {post.stakeRecipient}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Progress Update */}
-          {post.type === PostType.PROGRESS && (
-            <div className="p-4 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
-              <div className="flex items-center gap-2 mb-2">
-                <Flame className="size-5 text-orange-500" />
-                <span className="font-semibold text-orange-700 dark:text-orange-300">
-                  Progress Update
-                </span>
-              </div>
-              {post.progressPercentage !== undefined && (
-                <div className="mb-2">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-orange-600 dark:text-orange-400">
-                      Progress
-                    </span>
-                    <span className="text-orange-800 dark:text-orange-200 font-medium">
-                      {post.progressPercentage}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-orange-200 dark:bg-orange-800 rounded-full h-2">
-                    <div
-                      className="bg-orange-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${post.progressPercentage}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-              {post.progressNotes && (
-                <p className="text-orange-800 dark:text-orange-200 text-sm">
-                  {post.progressNotes}
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Completion */}
-          {post.type === PostType.COMPLETION && (
-            <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="size-5 text-green-500" />
-                <span className="font-semibold text-green-700 dark:text-green-300">
-                  Commitment Completed!
-                </span>
-              </div>
-              <p className="text-green-800 dark:text-green-200 text-sm">
-                🎉 Congratulations on achieving your goal!
-              </p>
-            </div>
-          )}
-
-          {/* Failure */}
-          {post.type === PostType.FAILURE && (
-            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-              <div className="flex items-center gap-2 mb-2">
-                <XCircle className="size-5 text-red-500" />
-                <span className="font-semibold text-red-700 dark:text-red-300">
-                  Commitment Failed
-                </span>
-              </div>
-              <p className="text-red-800 dark:text-red-200 text-sm">
-                The stake has been activated. Better luck next time!
-              </p>
-            </div>
-          )}
-
-          {/* Tags */}
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag.tag.id}
-                  className="inline-flex items-center px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full"
-                >
-                  #{tag.tag.name}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="text-sm leading-relaxed">
+            <HighlightedText text={post.content} />
+          </div>
         </Link>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-3 border-t">
+        <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
           <div className="flex items-center gap-4">
             {/* Like Button */}
             <Button
@@ -486,21 +499,21 @@ export function PostCard({
               onClick={handleLike}
               disabled={isLiking}
               className={cn(
-                "flex items-center gap-2 text-muted-foreground hover:text-red-500",
+                "flex items-center gap-1 text-muted-foreground hover:text-red-500 h-7 px-2",
                 localLikeState.isLiked && "text-red-500"
               )}
             >
               {isLiking ? (
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-3 animate-spin" />
               ) : (
                 <Heart
                   className={cn(
-                    "size-4",
+                    "size-3",
                     localLikeState.isLiked && "fill-current"
                   )}
                 />
               )}
-              <span className="text-sm">{localLikeState.likesCount}</span>
+              <span className="text-xs">{localLikeState.likesCount}</span>
             </Button>
 
             {/* Comment Button */}
@@ -508,10 +521,10 @@ export function PostCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-2 text-muted-foreground hover:text-blue-500"
+                className="flex items-center gap-1 text-muted-foreground hover:text-blue-500 h-7 px-2"
               >
-                <MessageCircle className="size-4" />
-                <span className="text-sm">{post._count.comments}</span>
+                <MessageCircle className="size-3" />
+                <span className="text-xs">{post._count.comments}</span>
               </Button>
             </PostComments>
 
@@ -521,14 +534,14 @@ export function PostCard({
               size="sm"
               onClick={handleShare}
               disabled={isSharing}
-              className="flex items-center gap-2 text-muted-foreground hover:text-green-500"
+              className="flex items-center gap-1 text-muted-foreground hover:text-green-500 h-7 px-2"
             >
               {isSharing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-3 animate-spin" />
               ) : (
-                <Share2 className="size-4" />
+                <Share2 className="size-3" />
               )}
-              <span className="text-sm">{post.sharesCount}</span>
+              <span className="text-xs">{post.sharesCount}</span>
             </Button>
           </div>
 
